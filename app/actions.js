@@ -21,6 +21,7 @@ var actions = {
 			actor.position.y = posY;
 			this.grid.putActor(actor);
 			actor.ticksBeforeAction = 5;
+			actor.requestedAction = null;
 
 			if (actor.socket) {
 				actor.socket.emit('update', {

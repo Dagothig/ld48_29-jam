@@ -15,9 +15,13 @@ module.exports = Object.define(
 			// Perform actions
 			self.actors.forEach(function(actor) {
 				if (!(--actor.ticksBeforeAction)) {
-					var action = actions[actor.requestedAction.action];
-					if (action) {
-						action.call(self, actor, actor.requestAction.args);
+					if (actor.requestedAction) {
+						var action = actions[actor.requestedAction.action];
+
+						// In case we send an invalid action we don't want lock out
+						if (!action) actor.requestedAction = null;
+
+						action.call(self, actor, actor.requestedAction.args);
 					} else {
 						actor.ticksBeforeAction = 1;
 					}

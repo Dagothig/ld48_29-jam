@@ -17,7 +17,7 @@ define(['pixi', 'game/tiled-sprite', 'game/tiled-texture'],
 					this.renderedTiles[x] = new Array(this.tHeight);
 				}
 
-				var texture = new TiledTexture(pixi.getTexture('img-tileset'), this.tileSize, this.tileSize);
+				var texture = new TiledTexture(pixi.getTexture(image), this.tileSize, this.tileSize);
 				this._tiledSprite = new TiledSprite(texture);
 				this._gridTexture = new pixi.RenderTexture(
 					this.tWidth * this.tileSize, 
