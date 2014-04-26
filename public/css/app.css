@@ -36,3 +36,14 @@ h1.enter-link a {
   color: #82FF00;
   text-shadow: 0.05em 0.05em #000;
 }
+
+.text-center {
+  text-align: center;
+}
+.funky {
+  color: #82FF00;
+  font-family: 'Indie Flower', 'cursive';
+}
+.funky a {
+  color: #fff;
+}
