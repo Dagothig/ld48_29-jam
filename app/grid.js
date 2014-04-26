@@ -43,6 +43,9 @@ module.exports = Object.define(
 				tilesY: tilesY
 			};
 		},
+		get map() {
+			return this.tiles[LayerTypes.TILES];
+		},
 		getTilesFor: function(tiles) {
 			var actors = {};
 			var tiles = [];
@@ -78,8 +81,8 @@ module.exports = Object.define(
 				for (var y = -actor.lineOfSight; y <= actor.lineOfSight; y++) {
 					var dist = x * x + y * y;
 					if (dist <= range2) {
-						var tX = (x + pX) % this.width;
-						var tY = (y + pY) % this.height;
+						var tX = (x + actor.position.x) % this.width;
+						var tY = (y + actor.position.y) % this.height;
 						
 						while (tX < 0)
 							tX += this.width;

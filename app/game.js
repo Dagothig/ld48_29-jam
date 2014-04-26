@@ -38,6 +38,7 @@ module.exports = Object.define(
 		connectPlayer: function(socket) {
 			var player = new Player(socket);
 			this.actors[player.id] = player;
+			socket.emit('map', this.grid.map);
 		},
 		disconnectPlayer: function(socket) {
 			delete this.actors[socket.playerId];
