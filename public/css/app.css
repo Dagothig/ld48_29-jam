@@ -1,40 +1,38 @@
 html, body {
+  font-size: 16px;
+  background: #111;
   margin: 0;
   padding: 0;
 }
-canvas {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-.overlay {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-#game-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-.focus {
-  background-color: rgba(32, 32, 32, 0.5);
-}
-.focus:after {
-  display: block;
-  position: absolute;
 
-  content: "Click to focus";
+.container, .o-container, .o-o-container {
+  border-radius: 1em;
+}
+.container {
+  padding: 1.5em;
+  background: #555;
+  border: 1em solid #444;
+}
+.o-container {
+  background: #333;
+  padding: 1em;
+}
+.o-o-container {
+  margin: 4em auto;
+  width: 90%;
+  max-width: 48em;
+  background: #222;
+  padding: 1em;
+}
 
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  margin: auto;
-  width: 8em;
-  height: 2em;
-  line-height: 2em;
-
+h1.enter-link {
+  padding: 0.5em;
+  font-size: 3em;
   text-align: center;
-  color: #fff;
+  font-family: 'Indie Flower', 'cursive';
+}
+h1.enter-link a {
+  text-decoration: none;
+  color: #82FF00;
+  text-shadow: 0.05em 0.05em #000;
 }
