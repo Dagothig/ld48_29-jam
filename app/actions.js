@@ -14,6 +14,16 @@ var actions = {
 		else if (args.y < 0)
 			args.y = Math.max(args.y, -actor.moveSpeed);
 
+		if (args.x > 0) {
+			actor.tileY = 2;
+		} else if (args.x < 0) {
+			actor.tileY = 1;
+		} else if (args.y > 0) {
+			actor.tileY = 0;
+		} else if (args.y < 0) {
+			actor.tileY = 3;
+		}
+
 		var posX = this.grid.validX(actor.position.x + args.x);
 		var posY = this.grid.validY(actor.position.y + args.y);
 
@@ -31,7 +41,14 @@ var actions = {
 					position: {
 						x: posX,
 						y: posY
-					}
+					},
+					tileY: actor.tileY
+				});
+			}
+		} else {
+			if (actor.socket) {
+				actor.socket.emit('update', {
+					tileY: actor.tileY
 				});
 			}
 		}

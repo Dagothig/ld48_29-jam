@@ -16,7 +16,7 @@ module.exports = Object.define(
 							if (Math.random() < 0.25)
 								this.tiles[n][x][y] = TileTypes.ROCK.tileId;
 							else
-								this.tiles[n][x][y] = TileTypes.GRASS.tileId;
+								this.tiles[n][x][y] = TileTypes.ROCKY_GROUND.tileId;
 							break;
 						case LayerTypes.ACTORS:
 							this.tiles[n][x][y] = [];

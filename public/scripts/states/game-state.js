@@ -8,6 +8,13 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 				this.game = game;
 				this.game.onresize = function() {
 					self.updateCamera();
+					if (self.grid) {
+						self.grid.renderAround(
+							self.player.position.x,
+							self.player.position.y,
+							self.player.lineOfSight
+						);
+					}
 				}
 				this.tileSize = 24;
 				this.map = new Map(0x201015, this.tileSize);
@@ -17,15 +24,14 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 
 				this.socket = io.connect('/');
 				this.socket.on('map', function(data) {
-					self.grid = new TileGrid('img-tileset', self.tileSize, data);
+					self.grid = new TileGrid('img-tileset', self.map, data);
 					self.grid.renderAround(
 						self.player.position.x,
 						self.player.position.y,
 						self.player.lineOfSight
 					);
-					self.gridActor = new Actor(self.grid);
-					self.gridActor.zOrder = -1;
-					self.map.addActor(self.gridActor);
+					self.map.stage.addChildAt(self.grid, 0);
+					self.map.grid = self.grid;
 				});
 
 				this.socket.on('display', function(data) {
@@ -80,17 +86,14 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 				// Orientation
 				IM.bind(IM.KEYS.A, IM.ACTIONS.PRESSED, function() {
 					if (window.KB_MODE == "qwerty") {
-						self.player.orientation = 0;
 					}
 				});
 				IM.bind(IM.KEYS.Q, IM.ACTIONS.PRESSED, function() {
 					if (window.KB_MODE == "azerty") {
-						self.player.orientation = 0;
 					}
 				});
 				IM.bind(IM.KEYS.W, IM.ACTIONS.PRESSED, function() {
 					if (window.KB_MODE == "qwerty") {
-						self.player.orientation = 1;
 					}
 				});
 				IM.bind(IM.KEYS.Z, IM.ACTIONS.PRESSED, function() {
@@ -131,6 +134,8 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 						this.player.position.x = data.position.x;
 						this.player.position.y = data.position.y;
 
+						this.updateCamera();
+						
 						if (this.grid) {
 							this.grid.renderAround(
 								this.player.position.x,
@@ -138,12 +143,13 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 								this.player.lineOfSight
 							);
 						}
-
-						this.updateCamera();
+					}
+					if (typeof data.tileY !== 'undefined') {
+						this.player.sprite.tileY = data.tileY;
 					}
 				},
 				updateDisplay: function(data) {
-					this.map.updateRenderActors(data);
+					this.map.updateRenderActors(data, this.player);
 				}
 			}
 		);

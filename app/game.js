@@ -7,7 +7,7 @@ module.exports = Object.define(
 		var self = this;
 
 		this.app = app;
-		this.grid = new Grid(10, 10);
+		this.grid = new Grid(50, 50);
 		this.actors = [];
 
 		// Game loop
@@ -38,7 +38,8 @@ module.exports = Object.define(
 					for (var key in actors) {
 						var act = actors[key];
 						info[key] = {
-							position: act.position 
+							position: act.position,
+							tileY: act.tileY
 						}
 					}
 					actor.socket.emit('display', info);

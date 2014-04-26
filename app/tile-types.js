@@ -5,6 +5,10 @@ var types = {
 	GRASS: {
 		tileId: 1,
 		walkable: true
+	},
+	ROCKY_GROUND: {
+		tileId: 2,
+		walkable: true
 	}
 };
 var reverseTypes = {};

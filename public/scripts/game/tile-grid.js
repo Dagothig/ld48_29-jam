@@ -2,38 +2,48 @@
 
 define(['pixi', 'game/tiled-sprite', 'game/tiled-texture'],
 	function(pixi, TiledSprite, TiledTexture) {
-		return Object.define(pixi.Sprite,
-			function TileGrid(image, tileSize, grid) {
+		return Object.define(pixi.SpriteBatch,
+			function TileGrid(image, map, grid) {
 				if (!grid.length)
 					throw 'The tile grid may not be given an empty grid';
 
 				this.grid = grid;
-				this.tileSize = tileSize;
+				this.map = map;
+				this.tileSize = map.tileSize;
 				this.tWidth = this.grid.length;
 				this.tHeight = this.grid[0].length;
 
-				var texture = new TiledTexture(pixi.getTexture(image), this.tileSize, this.tileSize);
-				this._tiledSprite = new TiledSprite(texture);
-				this._gridTexture = new pixi.RenderTexture(
-					this.tWidth * this.tileSize, 
-					this.tHeight * this.tileSize
-				);
-				pixi.Sprite.call(this, this._gridTexture);
+				this._texture = new TiledTexture(pixi.getTexture(image), this.tileSize, this.tileSize);
+				console.log(this._texture);
+				pixi.SpriteBatch.call(this);
+
+				this._buffer = [];
 
 			}, {
-				renderAround: function(x, y, range) {
-					if (this._gridTexture.width !== (range * 2 + 1) * this.tileSize ||
-							this._gridTexture.height !== (range * 2 + 1) * this.tileSize
-						) {
-						this._gridTexture = new pixi.RenderTexture(
-							(range * 2 + 1) * this.tileSize,
-							(range * 2 + 1) * this.tileSize
-						);
-						this.setTexture(this._gridTexture);
+				resetSpriteBuffer: function() {
+					this.buffer = this._buffer.slice();
+				},
+				getSprite: function(tileY, posX, posY, alpha) {
+					var sprite = this.buffer.pop();
+					if (!sprite) {
+						sprite = new TiledSprite(this._texture);
+						this._buffer.push(sprite);
 					}
-					this.position.x = (x - range) * this.tileSize;
-					this.position.y = (y - range) * this.tileSize;
-					var range2 = range * range, isFirst = true;
+					sprite.position.x = posX;
+					sprite.position.y = posY;
+					sprite.tileY = tileY;
+					sprite.alpha = alpha;
+
+					return sprite;
+				},
+
+				renderAround: function(x, y, range) {
+					this.resetSpriteBuffer();
+					this.children.length = 0;
+
+					this.position.x = (-(range - x) * this.tileSize) - this.map.cameraX;
+					this.position.y = (-(range - y) * this.tileSize) - this.map.cameraY;
+					var range2 = range * range;
 					for (var rX = -range; rX <= range; rX++) {
 						for (var rY = -range; rY <= range; rY++) {
 							var pX = (x + rX);
@@ -54,15 +64,14 @@ define(['pixi', 'game/tiled-sprite', 'game/tiled-texture'],
 
 							var dist = rX * rX + rY * rY;
 							if (dist + Object.SUCH_CONSTANT <= range2) {
-								this._tiledSprite.tileY = this.grid[pX][pY];
-								this._gridTexture.render(
-									this._tiledSprite,
-									{
-										x: (range + rX) * this.tileSize,
-										y: (range + rY) * this.tileSize
-									}, isFirst
+								this.children.push(
+									this.getSprite(
+										this.grid[pX][pY], 
+										(range + rX) * this.tileSize, 
+										(range + rY) * this.tileSize,
+										Math.pow((range2 - (dist + Object.SUCH_CONSTANT)) / range2, 2)
+									)
 								);
-								isFirst = false;
 							}
 						}
 					}

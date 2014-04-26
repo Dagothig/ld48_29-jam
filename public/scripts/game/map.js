@@ -79,7 +79,8 @@ define(['pixi', 'game/player'],
 					}
 				},
 
-				updateRenderActors: function(data) {
+				updateRenderActors: function(data, player) {
+					var range2 = player.lineOfSight * player.lineOfSight;
 					for (var key in data) {
 						var current = this.renderedActors[key];
 						var toDisplay = data[key];
@@ -90,6 +91,15 @@ define(['pixi', 'game/player'],
 						}
 						current.position.x = toDisplay.position.x;
 						current.position.y = toDisplay.position.y;
+						current.sprite.tileY = toDisplay.tileY || 0;
+
+						// Use diff to calculate alpha
+						var diffX = toDisplay.position.x - player.position.x;
+						var diffY = toDisplay.position.y - player.position.y;
+						var dist = diffX * diffX + diffY * diffY;
+						current.sprite.alpha = 
+							Math.pow((range2 - (dist + Object.SUCH_CONSTANT)) / range2, 2);
+
 						current.updated = true;
 					}
 					for (var key in this.renderedActors) {
@@ -108,14 +118,14 @@ define(['pixi', 'game/player'],
 					return -this.container.position.x;
 				},
 				set cameraX(val) {
-					this.container.position.x = -val;
+					this.container.position.x = Math.round(-val);
 				},
 
 				get cameraY() {
 					return -this.container.position.y;
 				},
 				set cameraY(val) {
-					this.container.position.y = -val;
+					this.container.position.y = Math.round(-val);
 				},
 
 				get backgroundColor() {
