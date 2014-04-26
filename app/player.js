@@ -11,12 +11,10 @@ module.exports = Object.define(
 		this.socket = socket;
 		this.socket.playerId = this.id;
 		this.socket.on('action-request', function(data) {
-			if (self.requestedAction == null) {
-				self.requestedAction = {
-					action: data.action,
-					args: data.args
-				};
-			}
+			self.requestedAction = {
+				action: data.action,
+				args: data.args
+			};
 		});
 	}, {
 

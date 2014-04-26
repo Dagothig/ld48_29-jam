@@ -38,3 +38,11 @@ canvas {
   text-align: center;
   color: #fff;
 }
+
+.halp {
+  font-family: Courier, sans-serif;
+  color: #fff;
+  position: fixed;
+  bottom: 0; left: 0;
+  padding: 0.5em;
+}

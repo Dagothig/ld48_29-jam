@@ -36,6 +36,7 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 					self.receiveUpdate.call(self, data);
 				});
 
+				// Movement (TODO extract this)
 				function emitMovement(x, y) {
 					self.socket.emit('action-request', {
 						action: 'move',
@@ -43,35 +44,40 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 					});
 				}
 				var IM = this.game.inputManager;
-				var movementKeys = [
-					{
+				var movementKeys = [{
 						key: IM.KEYS.LEFT,
 						pressed: function() {
 							emitMovement(-1, 0);
 						}
-					},
-					{
+					},{
 						key: IM.KEYS.RIGHT,
 						pressed: function() {
 							emitMovement(1, 0);
 						}
-					},
-					{
+					},{
 						key: IM.KEYS.UP,
 						pressed: function() {
 							emitMovement(0, -1);
 						}
-					},
-					{
+					},{
 						key: IM.KEYS.DOWN,
 						pressed: function() {
 							emitMovement(0, 1);
 						}
-					}
-				];
+					}];
 				movementKeys.forEach(function(movKey) {
 					IM.bind(movKey.key, IM.ACTIONS.PRESSED, movKey.pressed);
 				});
+				movementKeys.forEach(function(movKey) {
+					IM.bind(movKey.key, IM.ACTIONS.RELEASED, function(){
+						self.socket.emit('action-request', {
+							action: 'stopMove',
+							args: {}
+						});
+					});
+				});
+
+				// Orientation
 
 			}, {
 				update: function(delta) {
