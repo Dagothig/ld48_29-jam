@@ -87,11 +87,16 @@ define(['pixi', 'game/player'],
 						if (!current) {
 							current = new Player(this, toDisplay.sprite);
 							this.renderedActors[key] = current;
+							if (toDisplay.zOrder) {
+								current.zOrder = toDisplay.zOrder;
+							}
 							this.addActor(current);
 						}
 						current.position.x = toDisplay.position.x;
 						current.position.y = toDisplay.position.y;
 						current.sprite.tileY = toDisplay.tileY || 0;
+						if (toDisplay.decal)
+							current.sprite.decal = toDisplay.decal;
 
 						// Use diff to calculate alpha
 						var diffX = toDisplay.position.x - player.position.x;

@@ -22,11 +22,11 @@ module.exports = Object.define(
 				});
 			}
 			if (this._health <= 0) {
-				this.requestAction = {
+				this.requestedAction = {
 					action: 'die',
 					args: { items: this.items }
 				};
-				this.ticksBeforeAction = 0;
+				this.ticksBeforeAction = 1;
 				if (this.socket)
 					this.socket.emit('death');
 			}

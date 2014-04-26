@@ -45,7 +45,7 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 				});
 
 				this.socket.on('death', function() {
-					console.log("AW FAK");
+					self.player.remove();
 				});
 
 				// Movement (TODO extract this)
@@ -77,15 +77,26 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 							emitMovement(0, 1);
 						}
 					}];
+				var keyCount = 0;
 				movementKeys.forEach(function(movKey) {
 					IM.bind(movKey.key, IM.ACTIONS.PRESSED, movKey.pressed);
 				});
 				movementKeys.forEach(function(movKey) {
 					IM.bind(movKey.key, IM.ACTIONS.RELEASED, function(){
-						self.socket.emit('action-request', {
-							action: 'stopMove',
-							args: {}
-						});
+						if (IM.keys[IM.KEYS.UP]) {
+							emitMovement(0, -1);
+						} else if (IM.keys[IM.KEYS.LEFT]) {
+							emitMovement(-1, 0);
+						} else if (IM.keys[IM.KEYS.RIGHT]) {
+							emitMovement(1, 0);
+						} else if (IM.keys[IM.KEYS.DOWN]) {
+							emitMovement(0, 1);
+						} else {
+							self.socket.emit('action-request', {
+								action: 'stopMove',
+								args: {}
+							});
+						}
 					});
 				});
 
@@ -162,7 +173,7 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 					}(i));
 				}
 				this.player.selectedItemNo = 0;
-				this.itemSlots[0].className = 'active';
+				this.itemSlots[0].className = ' active';
 
 				IM.bind(IM.KEYS.E, IM.ACTIONS.PRESSED, function() {
 					if (self.treasureToolbar.children.length > 0) {
@@ -259,6 +270,7 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 					}
 
 					if ('items' in data) {
+						console.log(data.items);
 						this.player.items = data.items;
 						for (var i = 0; i < 4; i++) {
 							var isActive = false;

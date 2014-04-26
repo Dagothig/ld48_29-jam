@@ -7,7 +7,7 @@ module.exports = Object.define(
 		var self = this;
 
 		this.app = app;
-		this.grid = new Grid(120, 120);
+		this.grid = new Grid(25, 25);
 		this.actors = [];
 
 		// Game loop
@@ -40,7 +40,9 @@ module.exports = Object.define(
 						info[key] = {
 							position: act.position,
 							sprite: act.sprite,
-							tileY: act.tileY
+							tileY: act.tileY,
+							decal: act.decal,
+							zOrder: act.zOrder
 						}
 					}
 					actor.socket.emit('display', info);
@@ -63,8 +65,10 @@ module.exports = Object.define(
 			socket.emit('map', this.grid.map);
 		},
 		disconnectPlayer: function(socket) {
-			this.grid.removeActor(this.actors[socket.playerId]);
-			delete this.actors[socket.playerId];
+			if (this.actors[socket.playerId]) {
+				this.grid.removeActor(this.actors[socket.playerId]);
+				delete this.actors[socket.playerId];
+			}
 		}
 	}
 );

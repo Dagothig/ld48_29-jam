@@ -10,7 +10,21 @@ define(['pixi'],
 
 				pixi.Sprite.call(this, tiledTexture.getTile(0, 0));
 
-				this.decal = {x: 0, y: 0};
+				var self = this;
+				this._decal = {
+					get x() {
+						return self.anchor.x * self.width;
+					},
+					set x(val) {
+						self.anchor.x = val / self.width;
+					},
+					get y() {
+						return self.anchor.y * self.height;
+					},
+					set y(val) {
+						self.anchor.y = val / self.height;
+					}
+				};
 			}, {
 				get tileX() {
 					return this._tileX;
@@ -43,21 +57,6 @@ define(['pixi'],
 					return this._decal;
 				},
 				set decal(val) {
-					var self = this;
-					this._decal = {
-						get x() {
-							return self.anchor.x * self.width;
-						},
-						set x(val) {
-							self.anchor.x = val / self.width;
-						},
-						get y() {
-							return self.anchor.y * self.height;
-						},
-						set y(val) {
-							self.anchor.y = val / self.height;
-						}
-					};
 					this._decal.x = val.x;
 					this._decal.y = val.y;
 				}

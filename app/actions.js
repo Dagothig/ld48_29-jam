@@ -109,17 +109,21 @@ var actions = {
 		}
 
 		var items = [];
-		treasure.items.forEach(function(item) {
-			items.push(item.name);
+		treasure.items.forEach(function(item, i) {
+			items[i] = item.name;
 		});
 
 		for (var i = 0; i < actors.length; i++) {
 			var act = actors[i];
 			if (act.socket) {
 				if (act === actor) {
+					var actItems = [];
+					act.items.forEach(function(item, i) {
+						actItems[i] = item.name;
+					});
 					act.socket.emit('update', {
 						treasure: items,
-						items: act.items
+						items: actItems
 					})
 				} else {
 					act.socket.emit('update', {
@@ -161,8 +165,8 @@ var actions = {
 			this.grid.removeActor(treasure);
 		} else {
 			var items = [];
-			treasure.items.forEach(function(item) {
-				items.push(item.name);
+			treasure.items.forEach(function(item, i) {
+				items[i] = item.name;
 			});
 			data.treasure = items;
 		}
@@ -172,8 +176,8 @@ var actions = {
 			if (act.socket) {
 				if (act === actor) {
 					var items = [];
-					actor.items.forEach(function(item) {
-						items.push(item.name);
+					actor.items.forEach(function(item, i) {
+						items[i] = item.name;
 					})
 					data.items = items;
 				}
