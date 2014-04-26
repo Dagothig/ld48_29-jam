@@ -1,0 +1,52 @@
+<html>
+	<head>
+		<meta name="viewport" content="initial-scale=1.0" />
+		<style>
+			html, body {
+				margin: 0;
+				padding: 0;
+			}
+			canvas {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+			}
+			.overlay {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+			}
+			#game-container {
+				position: relative;
+				width: 100%;
+				height: 100%;
+			}
+			.focus {
+				background-color: rgba(32, 32, 32, 0.5);
+			}
+			.focus:after {
+				display: block;
+				position: absolute;
+
+				content: "Click to focus";
+
+				left: 0;
+				right: 0;
+				top: 0;
+				bottom: 0;
+				margin: auto;
+				width: 8em;
+				height: 2em;
+				line-height: 2em;
+
+				text-align: center;
+				color: #fff;
+			}
+		</style>
+		<script src="/scripts/object-extensions.js"></script>
+		<script src="/scripts/libs/require.js" data-main="/scripts/main"></script>
+	</head>
+	<body>
+		<div id="game-container"></div>
+	</body>
+</html>

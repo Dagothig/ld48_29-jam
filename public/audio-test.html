@@ -1,0 +1,70 @@
+<html>
+	<head>
+		
+	</head>
+	<body>
+		<script type="text/javascript">
+			var utils = {
+				defProps: function(obj, props) {
+					for (var key in props)
+						Object.defineProperty(obj, key, Object.getOwnPropertyDescriptor(props, key));
+				}
+			};
+
+			var AudioContext = AudioContext || webkitAudioContext;
+			var ctx = new AudioContext();
+			
+			function noteToFrequency(note) {
+				return Math.pow(2, (note - 69) / 12) * 440.0;
+			}
+
+			function Square(ctx) {
+				this.ctx = ctx;
+				this.out = this.ctx.createGain();
+				this.out.gain.value = 0.5;
+				this.voices = {};
+			}
+			utils.defProps(Square.prototype, {
+				playNote: function(note) {
+					if (this.voices[note])
+						return false;
+
+					var voice = this.ctx.createOscillator();
+					voice.type = voice.SAWTOOTH;
+					voice.frequency.value = noteToFrequency(note);
+					voice.connect(this.out);
+					voice.start(this.ctx.currentTime);
+					return this.voices[note] = voice;
+				},
+				stopNote: function(note) {
+					if (!this.voices[note])
+						return false;
+
+					var voice = this.voices[note];
+					voice.stop(this.ctx.currentTime);
+					voice.disconnect();
+					return delete this.voices[note];
+				}	
+			});
+
+			var t = new Square(ctx);
+			t.out.connect(ctx.destination);
+
+			var real = new Float32Array(4096);
+			var imag = new Float32Array(4096);
+
+			var shift = 2 * Math.PI * 0.5;
+
+			real[1] = -Math.sin(shift);
+			imag[1] = Math.cos(shift);
+
+			var pw = ctx.createPeriodicWave(real, imag);
+
+			var osc = ctx.createOscillator();
+			osc.setPeriodicWave(pw);
+			osc.connect(ctx.destination);
+			osc.start(ctx.currentTime);
+
+		</script>
+	</body>
+</html>
