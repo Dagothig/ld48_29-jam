@@ -16,10 +16,8 @@ define(['pixi', 'game/tiled-sprite', 'game/tiled-texture'],
 					this.renderedTiles[x] = new Array(this.grid[x].length);
 				}
 
-				var baseTexture = pixi.Texture.fromImage(image);
-				baseTexture.addEventListener('update', function() {
-					var tiledTexture = new TiledTexture(baseTexture, self.tileSize, self.tileSize);
-					self._tiledSprite = new TiledSprite(tiledTexture);
+				TiledTexture.fromFile(image, this.tileSize, this.tileSize, function(texture) {
+					self._tiledSprite = new TiledSprite(texture);
 					self._gridTexture = new pixi.RenderTexture(
 						grid.length * self.tileSize, 
 						grid[0].length * self.tileSize
