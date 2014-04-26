@@ -26,15 +26,18 @@ define(['utils'],
 		}
 		for (var letter = '0'.charCodeAt(0), len = '9'.charCodeAt(0); letter <= len; letter++) {
 			InputKey[String.fromCharCode(letter)] = letter;
-		}			
+		}
 
 		var InputManager = Object.define(
 			function InputManager() {
 				var self = this;
+				self.KEYS = InputKey;
+				self.ACTIONS = InputAction;
+
 				this._keydown = function(evt) {
 					if (!self.keys[evt.keyCode])
 						self.triggerEvent.call(self, InputAction.PRESSED, evt.keyCode);
-						
+
 					self.keys[evt.keyCode] = {};
 				};
 				this._keyup = function(evt) {
@@ -46,9 +49,9 @@ define(['utils'],
 					utils.polyfills.mouseOffset(evt);
 
 					if (!self.keys[-(evt.button + 1)]) {
-						self.triggerEvent.call(self, 
-							InputAction.PRESSED, 
-							-(evt.button + 1), 
+						self.triggerEvent.call(self,
+							InputAction.PRESSED,
+							-(evt.button + 1),
 							{x: evt.offsetX, y: evt.offsetY}
 						);
 					}
@@ -75,29 +78,31 @@ define(['utils'],
 					utils.polyfills.mouseOffset(evt);
 
 					delete self.keys[-(evt.button + 1)];
-					self.triggerEvent.call(self, 
-						InputAction.RELEASED, 
-						-(evt.button + 1), 
+					self.triggerEvent.call(self,
+						InputAction.RELEASED,
+						-(evt.button + 1),
 						{x: evt.offsetX, y: evt.offsetY}
 					);
 				};
 
 				this.keys = {};
 				this.listeners = [];
-				for (var key in InputAction)
+				for (var key in InputAction) {
 					this.listeners[InputAction[key]] = [];
+				}
 			}, {
 				update: function(delta) {
 					for (var key in this.keys) {
 						var val = this.keys[key];
 						val.delta = delta;
 						this.triggerEvent(
-							InputAction.DOWN, 
-							key, 
+							InputAction.DOWN,
+							key,
 							val
 						);
 					}
 				},
+
 				triggerEvent: function(action, key, args) {
 					if (this.listeners[action] && this.listeners[action][key]) {
 						this.listeners[action][key].forEach(function(handler) {

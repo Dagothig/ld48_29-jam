@@ -67,13 +67,15 @@ define(['pixi', 'input-manager', 'states/game-state'],
 
 						var delta = now - then;
 
-						if (self.hasFocus){
+						if (self.hasFocus) {
 							self.inputManager.update(delta);
-							if (self.currentState)
+							if (self.currentState) {
 								self.currentState.update(delta);
+							}
 						}
-						if (self.currentState)
+						if (self.currentState) {
 							self.currentState.render(self.renderer);
+						}
 
 						then = now;
 						requestAnimFrame(self.frame);

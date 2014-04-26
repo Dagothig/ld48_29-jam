@@ -19,6 +19,7 @@ var actions = {
 			actor.position.x = posX;
 			actor.position.y = posY;
 			actor.ticksBeforeAction = 5;
+			actor.requestedAction = null;
 
 			if (actor.socket) {
 				actor.socket.emit('update', {
