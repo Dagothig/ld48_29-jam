@@ -7,7 +7,7 @@ module.exports = Object.define(
 		var self = this;
 
 		this.app = app;
-		this.grid = new Grid(100, 100);
+		this.grid = new Grid(10, 10);
 		this.actors = [];
 
 		// Game loop
@@ -26,11 +26,19 @@ module.exports = Object.define(
 
 			// Display loop
 			self.actors.forEach(function(actor) {
-				var actors;
+				var actors = {};
 				if (actor.lineOfSight)
 					actors = self.grid.actorsWithinLOS(actor);
-				if (actor.socket)
-					actor.socket.emit('display', actors);
+				if (actor.socket) {
+					var info = {};
+					for (var key in actors) {
+						var act = actors[key];
+						info[key] = {
+							position: act.position 
+						}
+					}
+					actor.socket.emit('display', info);
+				}
 			});
 		}
 		require('./looper')(gameLoop, 50);
@@ -40,12 +48,14 @@ module.exports = Object.define(
 			this.actors[player.id] = player;
 			var pt = this.grid.randomWalkablePoint();
 			player.position = pt;
+			this.grid.putActor(player);
 			socket.emit('update', {
 				position: pt
 			});
 			socket.emit('map', this.grid.map);
 		},
 		disconnectPlayer: function(socket) {
+			this.grid.removeActor(this.actors[socket.playerId]);
 			delete this.actors[socket.playerId];
 		}
 	}

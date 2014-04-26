@@ -7,8 +7,6 @@ define(['pixi', 'game/tiled-sprite', 'game/tiled-texture'],
 				if (!grid.length)
 					throw 'The tile grid may not be given an empty grid';
 
-				var self = this
-
 				this.grid = grid;
 				this.tileSize = tileSize;
 				this.tWidth = this.grid.length;
@@ -19,18 +17,14 @@ define(['pixi', 'game/tiled-sprite', 'game/tiled-texture'],
 					this.renderedTiles[x] = new Array(this.tHeight);
 				}
 
-				TiledTexture.fromFile(image, this.tileSize, this.tileSize, function(texture) {
-					self._tiledSprite = new TiledSprite(texture);
-					self._gridTexture = new pixi.RenderTexture(
-						self.tWidth * self.tileSize, 
-						self.tHeight * self.tileSize
-					);
+				var texture = new TiledTexture(pixi.getTexture('img-tileset'), this.tileSize, this.tileSize);
+				this._tiledSprite = new TiledSprite(texture);
+				this._gridTexture = new pixi.RenderTexture(
+					this.tWidth * this.tileSize, 
+					this.tHeight * this.tileSize
+				);
+				pixi.Sprite.call(this, this._gridTexture);
 
-					pixi.Sprite.call(self, self._gridTexture);
-
-					if (self.onloaded)
-						self.onloaded();
-				});
 			}, {
 				renderAround: function(x, y, range) {
 					var range2 = range * range;

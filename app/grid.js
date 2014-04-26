@@ -55,6 +55,15 @@ module.exports = Object.define(
 		get map() {
 			return this.tiles[LayerTypes.TILES];
 		},
+		putActor: function(actor) {
+			this.tiles[LayerTypes.ACTORS][actor.position.x][actor.position.y].push(actor);
+		},
+		removeActor: function(actor) {
+			var arr = this.tiles[LayerTypes.ACTORS][actor.position.x][actor.position.y];
+			var i = arr.indexOf(actor);
+			if (i >= 0)
+				arr.splice(i, 1);
+		},
 		randomWalkablePoint: function() {
 			var pt, limit = 10000;
 			while (!pt) {

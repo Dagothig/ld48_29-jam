@@ -1,7 +1,7 @@
 'use strict';
 
-define(['pixi'],
-	function(pixi) {
+define(['pixi', 'game/player'],
+	function(pixi, Player) {
 		return Object.define(
 			function Map(backgroundColor, tileSize) {
 				this.stage = new pixi.Stage(backgroundColor);
@@ -9,6 +9,7 @@ define(['pixi'],
 				this.stage.addChild(this.container);
 				this.actors = [];
 				this.tileSize = tileSize;
+				this.renderedActors = {};
 			}, {
 				addActor: function(actor) {
 					var i = this.actors.length;
@@ -16,8 +17,8 @@ define(['pixi'],
 					if (i !== 0) {
 						while (i--) {
 							if (this.actors[i].zOrder < actor.zOrder) {
-								this.actors.splice(i, 0, actor);
-								this.container.children.splice(i, 0, actor.sprite);
+								this.actors.splice(i + 1, 0, actor);
+								this.container.children.splice(i + 1, 0, actor.sprite);
 								added = true;
 								break;
 							}
@@ -37,8 +38,10 @@ define(['pixi'],
 						}
 						actor.update(delta);
 
-						if (actor.shouldBeRemoved)
+						if (actor.shouldBeRemoved) {
 							this.actors.splice(i, 1);
+							this.container.children.splice(i, 1);
+						}
 					}
 				},
 				updateActorOrder: function(actor, currentIndex) {
@@ -76,6 +79,37 @@ define(['pixi'],
 					}
 				},
 
+				updateRenderActors: function(data) {
+					for (var key in data) {
+						var current = this.renderedActors[key];
+						var toDisplay = data[key];
+						if (current) {
+							if (current.sprite) {
+								current.position.x = toDisplay.position.x;
+								current.position.y = toDisplay.position.y;
+								current.updated = true;
+							}
+						} else {
+							var actor = new Player(this);
+							actor.position.x = toDisplay.position.x;
+							actor.position.y = toDisplay.position.y;
+							actor.updated = true;
+							this.renderedActors[key] = actor;
+							this.addActor(actor);
+						}
+					}
+					for (var key in this.renderedActors) {
+						var current = this.renderedActors[key];
+						if (!current.updated) {
+							delete this.renderedActors[key];
+							var i = this.actors.indexOf(current);
+							this.actors.splice(i, 1);
+							this.container.children.splice(i, 1);
+						}
+						current.updated = false;
+					}
+				},
+
 				get cameraX() {
 					return -this.container.position.x;
 				},
@@ -102,6 +136,8 @@ define(['pixi'],
 				},
 
 				activateWrapping: function(width, height) {
+					return;
+
 					this.wrapping = true;
 					this.width = width;
 					this.height = height;

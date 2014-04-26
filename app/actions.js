@@ -16,15 +16,17 @@ var actions = {
 
 		var pos = this.grid.getTileFor(posX, posY);
 		if (pos.tile.walkable) {
+			this.grid.removeActor(actor);
 			actor.position.x = posX;
 			actor.position.y = posY;
+			this.grid.putActor(actor);
 			actor.ticksBeforeAction = 5;
 
 			if (actor.socket) {
 				actor.socket.emit('update', {
 					position: {
-						posX: visibleTiles.tilesX,
-						posY: visibleTiles.tilesY
+						x: visibleTiles.tilesX,
+						y: visibleTiles.tilesY
 					}
 				});
 			}

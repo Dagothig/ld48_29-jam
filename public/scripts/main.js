@@ -16,8 +16,19 @@ require.config({
 });
 var game;
 define(
-	['game'],
-	function(Game) {
+	['pixi', 'game'],
+	function(pixi, Game) {
+		var textures = {};
+		pixi.getTexture = function(imageId) {
+			if (textures[imageId])
+				return textures[imageId];
+
+			var img = document.getElementById(imageId);
+			var text = new pixi.BaseTexture(img);
+			textures[imageId] = text;
+			return text;
+		}
+
 		game = new Game(document.getElementById('game-container'));
 	}
 );

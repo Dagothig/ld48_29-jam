@@ -23,13 +23,6 @@ define(['pixi'],
 				}
 			}
 		);
-		TiledTexture.fromFile = function(filename, tw, th, callback) {
-			var texture = pixi.Texture.fromImage(filename);
-			texture.addEventListener('update', function() {
-				var tiledTexture = new TiledTexture(texture, tw, th);
-				callback(tiledTexture);
-			});
-		}
 
 		return TiledTexture;
 	}

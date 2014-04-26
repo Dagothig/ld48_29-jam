@@ -10,24 +10,22 @@ define(['pixi', 'game/actor', 'game/tiled-texture', 'game/tiled-sprite'],
 				this._map = map;
 				this._position = {
 					get x() {
-						return self.sprite.position.x / (map.tileSize || 24)
+						return self.sprite.position.x / (map.tileSize)
 					},
 					set x(val) {
-						self.sprite.position.x = val * (map.tileSize || 24);
+						self.sprite.position.x = val * (map.tileSize);
 					},
 					get y() {
-						return self.sprite.position.y / (map.tileSize || 24)
+						return self.sprite.position.y / (map.tileSize)
 					},
 					set y(val) {
-						self.sprite.position.y = val * (map.tileSize || 24);
+						self.sprite.position.y = val * (map.tileSize);
 					}
 				};
 
-				TiledTexture.fromFile('/res/player.png', 24, 24, function(texture) {
-					var sprite = new TiledSprite(texture);
-					Actor.call(self, sprite);
-					map.addActor(self);
-				});
+				var texture = new TiledTexture(pixi.getTexture('img-player'), 24, 24);
+				var sprite = new TiledSprite(texture);
+				Actor.call(self, sprite);
 			}, {
 				get position() {
 					return this._position;

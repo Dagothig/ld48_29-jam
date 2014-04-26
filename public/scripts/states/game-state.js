@@ -12,22 +12,21 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 				this.tileSize = 24;
 				this.map = new Map(0x201015, this.tileSize);
 				this.player = new Player(this.map);
+				this.map.addActor(this.player);
 				this.objects = [];
 
 				this.socket = io.connect('/');
 				this.socket.on('map', function(data) {
 					self.grid = new TileGrid('res/tileset.png', self.tileSize, data);
-					self.grid.onloaded = function() {
-						self.grid.renderAround(
-							self.player.position.x,
-							self.player.position.y,
-							self.player.lineOfSight
-						);
-						self.gridActor = new Actor(self.grid);
-						self.gridActor.zOrder = -1;
-						self.map.addActor(self.gridActor);
-						self.map.activateWrapping(self.grid.tWidth, self.grid.tHeight);
-					}
+					self.grid.renderAround(
+						self.player.position.x,
+						self.player.position.y,
+						self.player.lineOfSight
+					);
+					self.gridActor = new Actor(self.grid);
+					self.gridActor.zOrder = -1;
+					self.map.addActor(self.gridActor);
+					self.map.activateWrapping(self.grid.tWidth, self.grid.tHeight);
 				});
 
 				this.socket.on('display', function(data) {
@@ -75,7 +74,7 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 					}
 				},
 				updateDisplay: function(data) {
-
+					this.map.updateRenderActors(data);
 				}
 			}
 		);
