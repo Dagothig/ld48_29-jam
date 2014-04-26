@@ -83,20 +83,14 @@ define(['pixi', 'game/player'],
 					for (var key in data) {
 						var current = this.renderedActors[key];
 						var toDisplay = data[key];
-						if (current) {
-							if (current.sprite) {
-								current.position.x = toDisplay.position.x;
-								current.position.y = toDisplay.position.y;
-								current.updated = true;
-							}
-						} else {
-							var actor = new Player(this);
-							actor.position.x = toDisplay.position.x;
-							actor.position.y = toDisplay.position.y;
-							actor.updated = true;
-							this.renderedActors[key] = actor;
-							this.addActor(actor);
+						if (!current) {
+							current = new Player(this);
+							this.renderedActors[key] = current;
+							this.addActor(current);
 						}
+						current.position.x = toDisplay.position.x;
+						current.position.y = toDisplay.position.y;
+						current.updated = true;
 					}
 					for (var key in this.renderedActors) {
 						var current = this.renderedActors[key];
@@ -115,8 +109,6 @@ define(['pixi', 'game/player'],
 				},
 				set cameraX(val) {
 					this.container.position.x = -val;
-					if (this.wrapping)
-						this.updateWrapping();
 				},
 
 				get cameraY() {
@@ -124,8 +116,6 @@ define(['pixi', 'game/player'],
 				},
 				set cameraY(val) {
 					this.container.position.y = -val;
-					if (this.wrapping)
-						this.updateWrapping();
 				},
 
 				get backgroundColor() {
@@ -133,48 +123,6 @@ define(['pixi', 'game/player'],
 				},
 				set backgroundColor(val) {
 					this.stage.backgroundColor = val;
-				},
-
-				activateWrapping: function(width, height) {
-					this.wrapping = true;
-					this.width = width;
-					this.height = height;
-					this.extraContainers = [
-						new pixi.SpriteBatch(),
-						new pixi.SpriteBatch(),
-						new pixi.SpriteBatch()
-					];
-					
-					var self = this;
-					this.extraContainers.forEach(function(container) {
-						container.children = self.container.children;
-						self.stage.addChild(container);
-					});
-
-					this.updateWrapping()
-				},
-				updateWrapping: function() {
-					var self = this;
-					this.extraContainers.forEach(function(container) {
-						container.position.x = self.container.position.x;
-						container.position.y = self.container.position.y;
-					});
-
-					if (self.container.position.x > 0) {
-						this.extraContainers[0].position.x -= this.width * this.tileSize;
-						this.extraContainers[1].position.x -= this.width * this.tileSize;
-					} else {
-						this.extraContainers[0].position.x += this.width * this.tileSize;
-						this.extraContainers[1].position.x += this.width * this.tileSize;
-					}
-
-					if (self.container.position.y > 0) {
-						this.extraContainers[1].position.y -= this.height * this.tileSize;
-						this.extraContainers[2].position.y -= this.height * this.tileSize;
-					} else {
-						this.extraContainers[1].position.y += this.height * this.tileSize;
-						this.extraContainers[2].position.y += this.height * this.tileSize;
-					}
 				}
 			}
 		);

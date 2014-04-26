@@ -3,8 +3,6 @@ var TILE_TYPES = require('./tile-types');
 var actions = {
 	/* { x, y } */
 	move: function(actor, args) {
-		console.log(actor.position.x, actor.position.y);
-
 		if (args.x > 0)
 			args.x = Math.min(args.x, actor.moveSpeed);
 		else if (args.x < 0)
@@ -29,7 +27,6 @@ var actions = {
 			actor.ticksBeforeAction = 5;
 
 			if (actor.socket) {
-				console.log('JOYPUKE')
 				actor.socket.emit('update', {
 					position: {
 						x: posX,
