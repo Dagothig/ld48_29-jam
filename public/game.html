@@ -22,6 +22,24 @@
 			Use <strong>0-9</strong> to select the item you want to hold in your hand.
 		</div>
 
+		<div class="kb-switch">
+			Mhe w4nt <strong>AZERTY</strong>
+		</div>
+
 		<script src="/scripts/libs/require.js" data-main="/scripts/main"></script>
+		<script src="/scripts/libs/zepto.min.js"></script>
+		<script type="text/javascript">
+			$(function(){
+				$('.kb-switch').on('click', function(){
+					if (window.KB_MODE == "querty") {
+						window.KB_MODE = "azerty";
+						$(this).find('strong').text("QUERTY");
+					} else {
+						window.KB_MODE = "querty";
+						$(this).find('strong').text("AZERTY");
+					}
+				});
+			});
+		</script>
 	</body>
 </html>

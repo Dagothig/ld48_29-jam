@@ -78,6 +78,32 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 				});
 
 				// Orientation
+				IM.bind(IM.KEYS.A, IM.ACTIONS.PRESSED, function() {
+					if (window.KB_MODE == "qwerty") {
+						self.player.orientation = 0;
+					}
+				});
+				IM.bind(IM.KEYS.Q, IM.ACTIONS.PRESSED, function() {
+					if (window.KB_MODE == "azerty") {
+						self.player.orientation = 0;
+					}
+				});
+				IM.bind(IM.KEYS.W, IM.ACTIONS.PRESSED, function() {
+					if (window.KB_MODE == "qwerty") {
+						self.player.orientation = 1;
+					}
+				});
+				IM.bind(IM.KEYS.Z, IM.ACTIONS.PRESSED, function() {
+					if (window.KB_MODE == "azerty") {
+
+					}
+				});
+				IM.bind(IM.KEYS.S, IM.ACTIONS.PRESSED, function() {
+
+				});
+				IM.bind(IM.KEYS.D, IM.ACTIONS.PRESSED, function() {
+
+				});
 
 			}, {
 				update: function(delta) {

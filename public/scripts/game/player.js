@@ -33,6 +33,13 @@ define(['pixi', 'game/actor', 'game/tiled-texture', 'game/tiled-sprite'],
 				set position(val) {
 					this._position.x = val.x;
 					this._position.y = val.y;
+				},
+				get orientation() {
+					return self._orientation;
+				},
+				set orientation(val) {
+					self._orientation = val;
+					self.sprite = val * 0.785398163; // Convert 0-3 in 45deg slices of radians.
 				}
 			}
 		);
