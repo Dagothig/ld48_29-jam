@@ -1,5 +1,6 @@
 var TILE_TYPES = require('./tile-types');
 var Treasure = require('./treasure');
+var itemTypes = require('./items');
 
 var actions = {
 	/* { x, y } */
@@ -29,6 +30,8 @@ var actions = {
 
 		var pos = this.grid.getTileFor(posX, posY);
 		actor.ticksBeforeAction = 1;
+
+		var data;
 		if (TILE_TYPES.fromId(pos.tile).walkable) {
 			this.grid.removeActor(actor);
 			actor.position.x = posX;
@@ -36,33 +39,33 @@ var actions = {
 			this.grid.putActor(actor);
 			actor.ticksBeforeAction = 5;
 
-			var items = [];
-			pos.actors.forEach(function(act) {
-				if (act instanceof Treasure)
-					act.items.forEach(function(item) {
-						items.push(item.name);
-					});
-			});
-
-			if (actor.socket) {
-				var data = {
-					position: {
-						x: posX,
-						y: posY
-					},
-					tileY: actor.tileY
-				};
-				if (items && items.length)
-					data.treasure = items;
-				actor.socket.emit('update', data);
-			}
+			data = {
+				position: {
+					x: posX,
+					y: posY
+				},
+				tileY: actor.tileY
+			};
 		} else {
-			if (actor.socket) {
-				actor.socket.emit('update', {
-					tileY: actor.tileY
-				});
-			}
+			data = {
+				tileY: actor.tileY
+			};
+
+			pos = this.grid.getTileFor(actor.position.x, actor.position.y);
 		}
+
+		var items = [];
+		pos.actors.forEach(function(act) {
+			if (act instanceof Treasure)
+				act.items.forEach(function(item) {
+					items.push(item.name);
+				});
+		});
+		if (items && items.length)
+			data.treasure = items;
+
+		if (actor.socket)
+			actor.socket.emit('update', data);
 	},
 	stopMove: function(actor, args) {
 		actor.requestedAction = null;
@@ -84,11 +87,12 @@ var actions = {
 		actor.requestedAction = null
 		actor.ticksBeforeAction = 1;
 
-		var actors = this.grid.getTileFor(actor.position.x, actor.position.y);
+		var actors = this.grid.getTileFor(actor.position.x, actor.position.y).actors;
 		var item = actor.items[args.itemNo];
 		if (!item) {
 			return;
 		}
+		delete actor.items[args.itemNo];
 
 		var treasure;
 		for (var i = 0; i < actors.length; i++){	
@@ -99,28 +103,118 @@ var actions = {
 				break;
 			}
 		}
-		if (!treasure)
+		if (!treasure) {
 			treasure = new Treasure(actor.position.x, actor.position.y, [item]);
+			this.grid.putActor(treasure);
+		}
 
 		var items = [];
 		treasure.items.forEach(function(item) {
 			items.push(item.name);
-		})
+		});
 
 		for (var i = 0; i < actors.length; i++) {
 			var act = actors[i];
 			if (act.socket) {
-				act.emit('update', {
-					treasure: items
-				});
+				if (act === actor) {
+					act.socket.emit('update', {
+						treasure: items,
+						items: act.items
+					})
+				} else {
+					act.socket.emit('update', {
+						treasure: items
+					});
+				}
+			}
+		}
+	},
+	/* { itemNo, treasureItemNo } */
+	swapItem: function(actor, args) {
+		actor.requestedAction = null;
+		actor.ticksBeforeAction = 1;
+		
+		var actors = this.grid.getTileFor(actor.position.x, actor.position.y).actors;
+		var treasure;
+		for (var i = 0; i < actors.length; i++){	
+			var act = actors[i];
+			if (act instanceof Treasure){
+				treasure = act;
+				break;
+			}
+		}
+		if (!treasure)
+			return;
+
+		var item = actor.items[args.itemNo];
+		var treasureItem = treasure.items[args.treasureItemNo];
+
+		actor.items[args.itemNo] = treasureItem;
+		if (item)
+			treasure.items[args.treasureItemNo] = itemTypes[item.name];
+		else
+			treasure.items.splice(args.treasureItemNo, 1);
+
+		var data = {};
+
+		if (!treasure.items.length) {
+			this.grid.removeActor(treasure);
+		} else {
+			var items = [];
+			treasure.items.forEach(function(item) {
+				items.push(item.name);
+			});
+			data.treasure = items;
+		}
+
+		for (var i = 0; i < actors.length; i++) {
+			var act = actors[i];
+			if (act.socket) {
+				if (act === actor) {
+					var items = [];
+					actor.items.forEach(function(item) {
+						items.push(item.name);
+					})
+					data.items = items;
+				}
+				act.socket.emit('update', data);
 			}
 		}
 	},
 	/* { items } */
 	die: function(actor, args) {
 		this.grid.removeActor(actor);
+		delete this.actors[actor.id];
 		if (args.items && args.items.length) {
-			var treasure = new Treasure(actor.position.x, actor.position.y, args.items);
+			var actors = this.grid.getTileFor(actor.position.x, actor.position.y).actors;
+			var treasure;
+			for (var i = 0; i < actors.length; i++) {
+				var act = actors[i];
+				if (act instanceof Treasure)
+					treasure = act;
+			} 
+			if (!treasure) {
+				treasure = new Treasure(actor.position.x, actor.position.y, args.items);
+				this.grid.putActor(treasure);
+			} else {
+				args.items.forEach(function(item) {
+					treasure.items.push(item);
+				});
+			}
+
+			var items = [];
+			treasure.items.forEach(function(item) {
+				items.push(item.name);
+			});
+
+			for (var i = 0; i < actors.length; i++) {
+				var act = actors[i];
+				if (act.socket) {
+					act.socket.emit('update', {
+						treasure: items
+					});
+				}
+			}
 		}
 	}
 };

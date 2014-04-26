@@ -19,7 +19,7 @@ var items = {
 					sword.position.x++;
 					sword.tileY = 2;
 					break;
-				case 'top':
+				case 'up':
 					sword.position.y--;
 					sword.tileY = 3;
 					break; 
@@ -28,8 +28,10 @@ var items = {
 					sword.tileY = 0;
 					break;
 			}
+			this.grid.putActor(sword);
+			this.actors[sword.id] = sword;
 
-			this.grid.getTileFor(sword.position.x, sword.position.y).actors.foreach(function(act) {
+			this.grid.getTileFor(sword.position.x, sword.position.y).actors.forEach(function(act) {
 				act.health--;
 			});
 

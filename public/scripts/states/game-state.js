@@ -95,19 +95,41 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 						action: 'useItem',
 						args: {
 							itemNo: self.player.selectedItemNo,
-							orientation: 'left'
+							orientation: direction
 						}
 					});
 				}
 
+				function dropOrSwapItem() {
+					if (self.selectedTreasureElement) {
+						self.socket.emit('action-request', {
+							action: 'swapItem',
+							args: {
+								itemNo: self.player.selectedItemNo,
+								treasureItemNo: self.selectedTreasureNo
+							}
+						});
+					} else {
+						self.socket.emit('action-request', {
+							action: 'dropItem',
+							args: {
+								itemNo: self.player.selectedItemNo
+							}
+						})
+					}
+				}
 				IM.bind(IM.KEYS.A, IM.ACTIONS.PRESSED, function() {
 					if (window.KB_MODE == "qwerty") {
 						useItem('left');
+					} else {
+						dropOrSwapItem();
 					}
 				});
 				IM.bind(IM.KEYS.Q, IM.ACTIONS.PRESSED, function() {
 					if (window.KB_MODE == "azerty") {
 						useItem('left');
+					} else {
+						dropOrSwapItem();
 					}
 				});
 				IM.bind(IM.KEYS.W, IM.ACTIONS.PRESSED, function() {
@@ -127,38 +149,57 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 						useItem('right');
 				});
 
-				var itemSlots = [];
+				this.itemSlots = [];
 				for (var i = 0; i < 4; i++) {
-					itemSlots[i] = document.getElementById('item-slot-' + i);
+					this.itemSlots[i] = document.getElementById('item-slot-' + i);
 					(function(key) {
 						IM.bind(IM.KEYS[key + 1], IM.ACTIONS.PRESSED, function() {
 							self.player.selectedItemNo = key;
 							for (var i = 0; i < 4; i++)
-								itemSlots[i].className = '';
-							itemSlots[key].className = 'active';
+								self.itemSlots[i].className = self.itemSlots[i].className.replace(' active', '');
+							self.itemSlots[key].className += ' active';
 						});
 					}(i));
 				}
 				this.player.selectedItemNo = 0;
-				itemSlots[0].className = 'active';
+				this.itemSlots[0].className = 'active';
+
+				IM.bind(IM.KEYS.E, IM.ACTIONS.PRESSED, function() {
+					if (self.treasureToolbar.children.length > 0) {
+						self.selectedTreasureElement.className = self.selectedTreasureElement.className.replace(' active', '');
+						self.selectedTreasureNo = (self.selectedTreasureNo + 1) % self.treasureToolbar.children.length;
+						self.selectedTreasureElement = self.treasureToolbar.children[self.selectedTreasureNo];
+						self.selectedTreasureElement.className += ' active';
+					}
+				});
 
 				this.itemsToolbar = document.getElementById('items-toolbar');
 				this.treasureToolbar = document.getElementById('treasure-toolbar');
+				this.selectedTreasureNo = null;
+				this.selectedTreasureElement = null;
+
 				this.openTreasureInterface = function(items) {
-					this.closeTreasureInterface();
-					this.itemsToolbar.className = 'comparison';
-					this.treasureToolbar.className = 'comparison';
+					self.closeTreasureInterface();
+					self.itemsToolbar.className = 'comparison';
+					self.treasureToolbar.className = 'comparison';
 					items.forEach(function(item) {
 						var itemElement = document.createElement('li');
 						itemElement.className = 'toolbar-icon icon-' + item;
 						self.treasureToolbar.appendChild(itemElement);
 					});
+					if (items.length) {
+						self.selectedTreasureNo = 0;
+						self.selectedTreasureElement = self.treasureToolbar.children[self.selectedTreasureNo];
+						self.selectedTreasureElement.className += ' active';
+					}
 				}
 				this.closeTreasureInterface = function() {
-					this.itemsToolbar.className = '';
-					this.treasureToolbar.className = '';
-					while (this.treasureToolbar.children.length)
-						this.treasureToolbar.children[0].remove();
+					self.itemsToolbar.className = '';
+					self.treasureToolbar.className = '';
+					self.selectedTreasureNo = null;
+					self.selectedTreasureElement = null;
+					while (self.treasureToolbar.children.length)
+						self.treasureToolbar.children[0].remove();
 				}
 			}, {
 				update: function(delta) {
@@ -215,6 +256,17 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 						this.openTreasureInterface(data.treasure);
 					} else {
 						this.closeTreasureInterface();
+					}
+
+					if ('items' in data) {
+						this.player.items = data.items;
+						for (var i = 0; i < 4; i++) {
+							var isActive = false;
+							if (this.itemSlots[i].className.indexOf('active') !== -1) {
+								isActive = true;
+							}
+							this.itemSlots[i].className = ' icon-' + this.player.items[i] + (isActive ? ' active' : '');
+						}
 					}
 				},
 				updateDisplay: function(data) {

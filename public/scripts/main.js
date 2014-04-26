@@ -18,6 +18,8 @@ var game;
 define(
 	['pixi', 'game'],
 	function(pixi, Game) {
+		window.KB_MODE = "qwerty";
+
 		var textures = {};
 		pixi.getTexture = function(imageId) {
 			if (textures[imageId])

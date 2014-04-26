@@ -21,6 +21,7 @@ define(['pixi', 'game/actor', 'game/tiled-texture', 'game/tiled-sprite'],
 						self.sprite.position.y = val * (map.tileSize);
 					}
 				};
+				this.items = [];
 
 				var texture = new TiledTexture(pixi.getTexture(filename || 'img-player'), 24, 24);
 				var sprite = new TiledSprite(texture);

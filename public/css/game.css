@@ -117,7 +117,8 @@ canvas {
 #treasure-toolbar:after {
   background-image: url('/res/treasure.png');
 }
-.toolbar-icon:after {
+#items-toolbar li:after,
+#treasure-toolbar li:after {
   display: block;
   position: absolute;
   top: 0;
@@ -143,6 +144,7 @@ canvas {
   position: relative;
   box-shadow: 0 0 1em #654 inset;
 }
-#items-toolbar li.active {
+#items-toolbar li.active,
+#treasure-toolbar li.active {
   box-shadow: 0 0 1em #fed inset;
 }
