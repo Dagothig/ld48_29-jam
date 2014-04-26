@@ -3,11 +3,12 @@
 define(['pixi'],
 	function(pixi) {
 		return Object.define(
-			function Map(backgroundColor) {
+			function Map(backgroundColor, tileSize) {
 				this.stage = new pixi.Stage(backgroundColor);
 				this.container = new pixi.SpriteBatch();
 				this.stage.addChild(this.container);
 				this.actors = [];
+				this.tileSize = tileSize;
 			}, {
 				addActor: function(actor) {
 					var i = this.actors.length;
@@ -26,7 +27,6 @@ define(['pixi'],
 						this.actors.splice(0, 0, actor);
 						this.container.children.splice(0, 0, actor.sprite);
 					}
-					console.log(this.container.children);
 				},
 				update: function(delta) {
 					var i = this.actors.length;
@@ -81,6 +81,8 @@ define(['pixi'],
 				},
 				set cameraX(val) {
 					this.container.position.x = -val;
+					if (this.wrapping)
+						this.updateWrapping();
 				},
 
 				get cameraY() {
@@ -88,6 +90,8 @@ define(['pixi'],
 				},
 				set cameraY(val) {
 					this.container.position.y = -val;
+					if (this.wrapping)
+						this.updateWrapping();
 				},
 
 				get backgroundColor() {
@@ -98,6 +102,45 @@ define(['pixi'],
 				},
 
 				activateWrapping: function(width, height) {
+					this.wrapping = true;
+					this.width = width;
+					this.height = height;
+					this.extraContainers = [
+						new pixi.SpriteBatch(),
+						new pixi.SpriteBatch(),
+						new pixi.SpriteBatch()
+					];
+					
+					var self = this;
+					this.extraContainers.forEach(function(container) {
+						container.children = self.container.children;
+						self.stage.addChild(container);
+					});
+
+					this.updateWrapping()
+				},
+				updateWrapping: function() {
+					var self = this;
+					this.extraContainers.forEach(function(container) {
+						container.position.x = self.container.position.x;
+						container.position.y = self.container.position.y;
+					});
+
+					if (self.container.position.x > 0) {
+						this.extraContainers[0].position.x -= this.width * this.tileSize;
+						this.extraContainers[1].position.x -= this.width * this.tileSize;
+					} else {
+						this.extraContainers[0].position.x += this.width * this.tileSize;
+						this.extraContainers[1].position.x += this.width * this.tileSize;
+					}
+
+					if (self.container.position.y > 0) {
+						this.extraContainers[1].position.y -= this.height * this.tileSize;
+						this.extraContainers[2].position.y -= this.height * this.tileSize;
+					} else {
+						this.extraContainers[1].position.y += this.height * this.tileSize;
+						this.extraContainers[2].position.y += this.height * this.tileSize;
+					}
 				}
 			}
 		);

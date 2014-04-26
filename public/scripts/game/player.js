@@ -14,14 +14,12 @@ define(['pixi', 'game/actor', 'game/tiled-texture', 'game/tiled-sprite'],
 					},
 					set x(val) {
 						self.sprite.position.x = val * (map.tileSize || 24);
-						console.log(val, self.sprite.position.x);
 					},
 					get y() {
 						return self.sprite.position.y / (map.tileSize || 24)
 					},
 					set y(val) {
 						self.sprite.position.y = val * (map.tileSize || 24);
-						console.log(val, self.sprite.position.y);
 					}
 				};
 

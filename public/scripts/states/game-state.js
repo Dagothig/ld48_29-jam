@@ -10,13 +10,13 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 					self.updateCamera();
 				}
 				this.tileSize = 24;
-				this.map = new Map(0x201015);
+				this.map = new Map(0x201015, this.tileSize);
 				this.player = new Player(this.map);
 				this.objects = [];
 
 				this.socket = io.connect('/');
 				this.socket.on('map', function(data) {
-					self.grid = new TileGrid('res/tileset.png', 24, data);
+					self.grid = new TileGrid('res/tileset.png', self.tileSize, data);
 					self.grid.onloaded = function() {
 						self.grid.renderAround(
 							self.player.position.x,
@@ -50,12 +50,12 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 					this.map.cameraX =
 						(this.player.position.x * this.tileSize) -
 						(this.game.container.offsetWidth / 2) +
-						12;
+						this.player.sprite.width / 2;
 
 					this.map.cameraY =
 						(this.player.position.y * this.tileSize) -
 						(this.game.container.offsetHeight / 2) +
-						12;
+						this.player.sprite.height / 2;
 				},
 
 				receiveUpdate: function(data) {
