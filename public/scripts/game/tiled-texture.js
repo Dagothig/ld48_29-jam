@@ -21,7 +21,7 @@ define(['pixi'],
 				getTile: function(x, y) {
 					return this.tiles[x][y];
 				}
-			}	
+			}
 		);
 		TiledTexture.fromFile = function(filename, tw, th, callback) {
 			var texture = pixi.Texture.fromImage(filename);

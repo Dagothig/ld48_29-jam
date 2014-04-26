@@ -1,7 +1,7 @@
 'use strict';
 
-define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor'],
-	function(Map, io, pixi, TileGrid, Actor) {
+define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player'],
+	function(Map, io, pixi, TileGrid, Actor, Player) {
 		return Object.define(
 			function GameState(game) {
 				var self = this;
@@ -11,6 +11,8 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor'],
 				}
 				this.tileSize = 24;
 				this.map = new Map(0x201015);
+				this.playerActor = new Player();
+				this.objects = [];
 				this.player = {
 					position: {},
 					lineOfSight: 6
@@ -41,9 +43,11 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor'],
 			}, {
 				update: function(delta) {
 					this.map.update(delta);
+					this.playerActor.update(delta);
 				},
 				render: function(renderer) {
 					renderer.render(this.map.stage);
+					this.playerActor.render(delta);
 				},
 
 				updateCamera: function() {
@@ -65,8 +69,8 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor'],
 
 						if (this.grid) {
 							this.grid.renderAround(
-								this.player.position.x, 
-								this.player.position.y, 
+								this.player.position.x,
+								this.player.position.y,
 								this.player.lineOfSight
 							);
 						}
