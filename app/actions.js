@@ -24,7 +24,7 @@ var actions = {
 
 			if (actor.socket) {
 				actor.socket.emit('update', {
-					'move': {
+					position: {
 						posX: visibleTiles.tilesX,
 						posY: visibleTiles.tilesY
 					}

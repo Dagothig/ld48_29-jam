@@ -38,6 +38,11 @@ module.exports = Object.define(
 		connectPlayer: function(socket) {
 			var player = new Player(socket);
 			this.actors[player.id] = player;
+			var pt = this.grid.randomWalkablePoint();
+			player.position = pt;
+			socket.emit('update', {
+				position: pt
+			});
 			socket.emit('map', this.grid.map);
 		},
 		disconnectPlayer: function(socket) {

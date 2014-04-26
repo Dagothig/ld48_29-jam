@@ -11,8 +11,14 @@ module.exports = Object.define(
 			for (var x = 0; x < this.width; x++) {
 				this.tiles[n][x] = new Array(this.height);
 				for (var y = 0; y < this.height; y++) {
-					if (n === LayerTypes.TILES)
-						this.tiles[n][x][y] = TileTypes.GRASS.tileId;
+					switch (n) {
+						case LayerTypes.TILES: 
+							this.tiles[n][x][y] = TileTypes.GRASS.tileId;
+							break;
+						case LayerTypes.ACTORS:
+							this.tiles[n][x][y] = [];
+							break;
+					}
 				}
 			}
 		}
@@ -46,16 +52,36 @@ module.exports = Object.define(
 		get map() {
 			return this.tiles[LayerTypes.TILES];
 		},
+		randomWalkablePoint: function() {
+			var pt, limit = 10000;
+			while (!pt) {
+				if (!limit--)
+					return { x: 0, y: 0 };
+
+				var x = Math.floor(Math.random() * this.width);
+				var y = Math.floor(Math.random() * this.height);
+				var pos = this.getTileFor(x, y);
+				if (TileTypes.fromId(pos.tile).walkable && !Object.keys(pos.actors).length) {
+					pt = {
+						x: x, 
+						y: y
+					};
+				}
+			}
+			return pt;
+		},
 		getTilesFor: function(tiles) {
 			var actors = {};
 			var tiles = [];
 
 			for (var n = 0, l = Math.min(tiles.tilesX.length, tiles.tilesY.length); n < l; n++) {
-				var actor = this.tiles[LayerTypes.ACTORS]
+				var acts = this.tiles[LayerTypes.ACTORS]
 					[tiles.tilesX[n]]
 					[tiles.tilesY[n]];
-				if (actor)
-					actors[n] = actor;
+				for (var key in acts) {
+					var act = acts[key];
+					actors[act.id] = act;
+				}
 
 				tiles[n] = this.tiles[LayerTypes.TILES]
 					[tiles.tilesX[n]]
@@ -69,7 +95,7 @@ module.exports = Object.define(
 		},
 		getTileFor: function(x, y) {
 			return {
-				actor: this.tiles[LayerTypes.ACTORS][x][y],
+				actors: this.tiles[LayerTypes.ACTORS][x][y],
 				tile: this.tiles[LayerTypes.TILES][x][y]
 			};
 		},
@@ -89,9 +115,11 @@ module.exports = Object.define(
 						while (tY < 0)
 							tY += this.height;
 
-						var act = this.tiles[LayerTypes.ACTORS][tX][tY];
-						if (act && actor !== act)
-							actors[act.id] = act;
+						var acts = this.tiles[LayerTypes.ACTORS][tX][tY];
+						acts.forEach(function(act) {
+							if (act !== actor)
+								actors[act.id] = act;
+						});
 					}
 				}
 			}
