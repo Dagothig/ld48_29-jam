@@ -14,7 +14,6 @@ define(['pixi', 'game/tiled-sprite', 'game/tiled-texture'],
 				this.tHeight = this.grid[0].length;
 
 				this._texture = new TiledTexture(pixi.getTexture(image), this.tileSize, this.tileSize);
-				console.log(this._texture);
 				pixi.SpriteBatch.call(this);
 
 				this._buffer = [];
@@ -66,8 +65,8 @@ define(['pixi', 'game/tiled-sprite', 'game/tiled-texture'],
 							if (dist + Object.SUCH_CONSTANT <= range2) {
 								this.children.push(
 									this.getSprite(
-										this.grid[pX][pY], 
-										(range + rX) * this.tileSize, 
+										this.grid[pX][pY],
+										(range + rX) * this.tileSize,
 										(range + rY) * this.tileSize,
 										Math.pow((range2 - (dist + Object.SUCH_CONSTANT)) / range2, 2)
 									)

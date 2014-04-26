@@ -20,8 +20,6 @@ module.exports = Object.define(
 							break;
 						case LayerTypes.ACTORS:
 							this.tiles[n][x][y] = [];
-							if(Math.random() < 0.05)
-								this.tiles[n][x][y].push(new (require('./treasure'))(x, y, [require('./items').broadsword]));
 							break;
 					}
 				}
@@ -95,11 +93,11 @@ module.exports = Object.define(
 
 		var tryAddRoomForWall = function(wall) {
 			var hallway = rndPointFromWall(wall);
-			var hallwayLength = getRandom(4, 6);
-			if (hallway.dir == 'up')    hallway.y -= hallwayLength+1; // Make some space for corridor
-			if (hallway.dir == 'down')  hallway.y += hallwayLength+1;
-			if (hallway.dir == 'left')  hallway.x -= hallwayLength+1;
-			if (hallway.dir == 'right') hallway.x += hallwayLength+1;
+			var hallwayLength = getRandom(5, 7);
+			if (hallway.dir == 'up')    hallway.y -= hallwayLength; // Make some space for corridor
+			if (hallway.dir == 'down')  hallway.y += hallwayLength;
+			if (hallway.dir == 'left')  hallway.x -= hallwayLength;
+			if (hallway.dir == 'right') hallway.x += hallwayLength;
 			var desiredDimensions = {
 				width: getRandom(2, 4),
 				height: getRandom(2, 4)
@@ -121,9 +119,18 @@ module.exports = Object.define(
 			if (isOK) { // Spawn the motherfucker! (actually its a room not a mtf)
 				forEachRect(roomRect, function(x, y) {
 					self.tiles[LayerTypes.TILES][x][y] = TileTypes.ROCKY_GROUND.tileId;
+					if (Math.random() < 0.005) {
+						var Treasure = require('./treasure');
+						var Items = require('./items');
+						self.tiles[LayerTypes.ACTORS][x][y].push(new Treasure(x, y, [Items.broadsword]));
+					}
+					if (Math.random() < 0.005) {
+						var Troll = require('./troll');
+						self.tiles[LayerTypes.ACTORS][x][y].push(new Troll(x, y));
+					}
 				});
 				var grid = self.tiles[LayerTypes.TILES];
-				for (var i = 1; i <= hallwayLength; i++) {
+				for (var i = 1; i <= hallwayLength-1; i++) {
 					if (hallway.dir == 'up') { // Ehh we want doors right?
 							grid[hallway.x][hallway.y-i] = TileTypes.ROCKY_GROUND.tileId;
 					} else if (hallway.dir == 'down') {
