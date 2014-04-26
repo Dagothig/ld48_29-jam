@@ -95,7 +95,7 @@ var actions = {
 		delete actor.items[args.itemNo];
 
 		var treasure;
-		for (var i = 0; i < actors.length; i++){	
+		for (var i = 0; i < actors.length; i++){
 			var act = actors[i];
 			if (act instanceof Treasure){
 				act.items.push(item);

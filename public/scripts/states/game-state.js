@@ -49,11 +49,15 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 				});
 
 				// Movement (TODO extract this)
+				var lastCall = Date.now();
 				function emitMovement(x, y) {
-					self.socket.emit('action-request', {
-						action: 'move',
-						args: {x: x, y: y}
-					});
+					if (Date.now() - lastCall > 100) {
+						lastCall = Date.now();
+						self.socket.emit('action-request', {
+							action: 'move',
+							args: {x: x, y: y}
+						});
+					}
 				}
 				var IM = this.game.inputManager;
 				var movementKeys = [{
@@ -228,7 +232,7 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 						this.player.position.y = data.position.y;
 
 						this.updateCamera();
-						
+
 						if (this.grid) {
 							this.grid.renderAround(
 								this.player.position.x,
