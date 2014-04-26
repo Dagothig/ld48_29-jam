@@ -11,9 +11,9 @@ var reverseTypes = {};
 
 var out = {};
 for (var key in types) {
-	reverseTypes[types.tileId] = types[key];
+	reverseTypes[types[key].tileId] = types[key];
 	out[key] = types[key];
-} 
+}
 out.fromId = function(id) {
 	return reverseTypes[id];
 }

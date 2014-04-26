@@ -1,4 +1,5 @@
 module.exports = {
 	TILES: 0,
-	ACTORS: 1
+	ITEMS: 1,
+	ACTORS: 2
 };

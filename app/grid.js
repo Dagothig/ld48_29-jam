@@ -27,7 +27,7 @@ module.exports = Object.define(
 					if (dist <= range2) {
 						var tX = (x + pX) % this.width;
 						var tY = (y + pY) % this.height;
-						
+
 						while (tX < 0)
 							tX += this.width;
 						while (tY < 0)

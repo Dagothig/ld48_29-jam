@@ -64,7 +64,7 @@ define(['pixi', 'input-manager', 'states/game-state'],
 						}
 
 						var delta = now - then;
-						
+
 						if (self.hasFocus){
 							self.inputManager.update(delta);
 							if (self.currentState)
@@ -83,6 +83,6 @@ define(['pixi', 'input-manager', 'states/game-state'],
 					throw "Not implemented sorry nope nada";
 				}
 			}
-		);	
+		);
 	}
 );
