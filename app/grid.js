@@ -3,20 +3,20 @@ var LayerTypes = require('./layer-types');
 
 module.exports = Object.define(
 	function Grid(width, height) {
+		var self = this;
 		this.width = width;
 		this.height = height;
 		this.tiles = new Array(Object.keys(LayerTypes).length);
+
+		// Fill in ground end empty layer type arrays
 		for (var n = 0; n < this.tiles.length; n++) {
 			this.tiles[n] = new Array(this.width);
 			for (var x = 0; x < this.width; x++) {
 				this.tiles[n][x] = new Array(this.height);
 				for (var y = 0; y < this.height; y++) {
 					switch (n) {
-						case LayerTypes.TILES: 
-							if (Math.random() < 0.25)
-								this.tiles[n][x][y] = TileTypes.ROCK.tileId;
-							else
-								this.tiles[n][x][y] = TileTypes.ROCKY_GROUND.tileId;
+						case LayerTypes.TILES:
+							this.tiles[n][x][y] = TileTypes.ROCK.tileId;
 							break;
 						case LayerTypes.ACTORS:
 							this.tiles[n][x][y] = [];
@@ -27,6 +27,127 @@ module.exports = Object.define(
 				}
 			}
 		}
+
+		// Generate dungeons
+		var center = {x: Math.round(this.width/2), y: Math.round(this.height/2)};
+		var centerZone = {x1: center.x-10, y1: center.y-10, x2: center.x+10, y2: center.y+10};
+		var walls = [];
+		var getRandom = function(min, max) {
+			return Math.floor(Math.random()*(max-min+1)+min);
+		};
+		var addWallsForRect = function(walls, rect) {
+			walls.push({ x1: rect.x1, y1: rect.y1, x2: rect.x1, y2: rect.y2, dir: 'left' });
+			walls.push({ x1: rect.x1, y1: rect.y1, x2: rect.x2, y2: rect.y1, dir: 'up' });
+			walls.push({ x1: rect.x2, y1: rect.y1, x2: rect.x2, y2: rect.y2, dir: 'right' });
+			walls.push({ x1: rect.x1, y1: rect.y2, x2: rect.x2, y2: rect.y2, dir: 'down' });
+		};
+		var rndPointFromWall = function(wall) {
+			if (wall.x1 == wall.x2) { // horizontal wall (left - right)
+				return { x: wall.x1, y: getRandom(wall.y1, wall.y2), dir: wall.dir };
+			} else { // vertical wall (up - down)
+				return { x: getRandom(wall.x1, wall.x2), y: wall.y1, dir: wall.dir };
+			}
+		};
+		var forEachRect = function(rect, cb) {
+			for (var x = rect.x1; x <= rect.x2; x++) {
+				for (var y = rect.y1; y <= rect.y2; y++) {
+					cb(x, y);
+				}
+			}
+		};
+		var forEachTiles = function(cb) {
+			forEachRect({
+				x1: 0, y1: 0,
+				x2: self.width-1, y2: self.height-1
+			}, cb);
+		};
+		var findRoomRectFromHallwayAndDimensions = function(hallway, roomSize) {
+			if (hallway.dir == 'up') {
+				return {
+					x1: hallway.x - Math.round(roomSize.width/2),
+					y1: hallway.y - roomSize.height,
+					x2: hallway.x + Math.round(roomSize.width/2),
+					y2: hallway.y
+				};
+			} else if (hallway.dir == 'down') {
+				return {
+					x1: hallway.x - Math.round(roomSize.width/2),
+					y1: hallway.y,
+					x2: hallway.x + Math.round(roomSize.width/2),
+					y2: hallway.y + roomSize.height
+				};
+			} else if (hallway.dir == 'left') {
+				return {
+					x1: hallway.x - roomSize.width,
+					y1: hallway.y - Math.round(roomSize.height/2),
+					x2: hallway.x,
+					y2: hallway.y + Math.round(roomSize.width/2)
+				};
+			} else if (hallway.dir == 'right') {
+				return {
+					x1: hallway.x,
+					y1: hallway.y - Math.round(roomSize.height/2),
+					x2: hallway.x + roomSize.width,
+					y2: hallway.y + Math.round(roomSize.width/2)
+				};
+			}
+		};
+
+		var tryAddRoomForWall = function(wall) {
+			var hallway = rndPointFromWall(wall);
+			var hallwayLength = getRandom(4, 6);
+			if (hallway.dir == 'up')    hallway.y -= hallwayLength+1; // Make some space for corridor
+			if (hallway.dir == 'down')  hallway.y += hallwayLength+1;
+			if (hallway.dir == 'left')  hallway.x -= hallwayLength+1;
+			if (hallway.dir == 'right') hallway.x += hallwayLength+1;
+			var desiredDimensions = {
+				width: getRandom(2, 4),
+				height: getRandom(2, 4)
+			};
+			var roomRect = findRoomRectFromHallwayAndDimensions(hallway, desiredDimensions);
+
+			// Can we build?
+			var isOK = true;
+			forEachRect(roomRect, function(x, y) {
+				grid = self.tiles[LayerTypes.TILES];
+				try {
+					if (grid[x][y] != TileTypes.ROCK.tileId) {
+						isOK = false; // is not k! kay?
+					}
+				} catch (o_O) {
+					isOK = false; // grid not big enough for room size
+				}
+			});
+			if (isOK) { // Spawn the motherfucker! (actually its a room not a mtf)
+				forEachRect(roomRect, function(x, y) {
+					self.tiles[LayerTypes.TILES][x][y] = TileTypes.ROCKY_GROUND.tileId;
+				});
+				var grid = self.tiles[LayerTypes.TILES];
+				for (var i = 1; i <= hallwayLength; i++) {
+					if (hallway.dir == 'up') { // Ehh we want doors right?
+							grid[hallway.x][hallway.y-i] = TileTypes.ROCKY_GROUND.tileId;
+					} else if (hallway.dir == 'down') {
+							grid[hallway.x][hallway.y+i] = TileTypes.ROCKY_GROUND.tileId;
+					} else if (hallway.dir == 'left') {
+							grid[hallway.x+i][hallway.y] = TileTypes.ROCKY_GROUND.tileId;
+					} else if (hallway.dir == 'right') {
+							grid[hallway.x-i][hallway.y] = TileTypes.ROCKY_GROUND.tileId;
+					}
+				}
+
+				var nextWalls = [];
+				addWallsForRect(nextWalls, roomRect);
+				nextWalls.forEach(tryAddRoomForWall);
+			}
+
+		}
+
+		forEachRect(centerZone, function(x, y) { // Fill grassy center zone
+			self.tiles[LayerTypes.TILES][x][y] = TileTypes.GRASS.tileId;
+		});
+		addWallsForRect(walls, centerZone); // Add 4 first walls
+		walls.forEach(tryAddRoomForWall); // start doom building
+
 	}, {
 		getTilesPosWithin: function(pX, pY, range) {
 			var range2 = range * range;
@@ -72,7 +193,7 @@ module.exports = Object.define(
 				var pos = this.getTileFor(x, y);
 				if (TileTypes.fromId(pos.tile).walkable && !Object.keys(pos.actors).length) {
 					pt = {
-						x: x, 
+						x: x,
 						y: y
 					};
 				}

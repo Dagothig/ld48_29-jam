@@ -47,3 +47,11 @@ h1.enter-link a {
 .funky a {
   color: #fff;
 }
+
+.halp {
+  font-family: Courier, sans-serif;
+  color: #fff;
+  position: fixed;
+  bottom: 0; left: 0;
+  padding: 0.5em;
+}
