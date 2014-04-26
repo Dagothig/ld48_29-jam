@@ -13,7 +13,10 @@ module.exports = Object.define(
 				for (var y = 0; y < this.height; y++) {
 					switch (n) {
 						case LayerTypes.TILES: 
-							this.tiles[n][x][y] = TileTypes.GRASS.tileId;
+							if (Math.random() < 0.5)
+								this.tiles[n][x][y] = TileTypes.ROCK.tileId;
+							else
+								this.tiles[n][x][y] = TileTypes.GRASS.tileId;
 							break;
 						case LayerTypes.ACTORS:
 							this.tiles[n][x][y] = [];
@@ -30,7 +33,7 @@ module.exports = Object.define(
 			for (var x = -range; x <= range ; x++) {
 				for (var y = -range; y <= range; y++) {
 					var dist = x * x + y * y;
-					if (dist - 2 <= range2) {
+					if (dist + Object.SUCH_CONSTANT <= range2) {
 						var tX = (x + pX) % this.width;
 						var tY = (y + pY) % this.height;
 
@@ -106,7 +109,7 @@ module.exports = Object.define(
 			for (var x = -actor.lineOfSight; x <= actor.lineOfSight ; x++) {
 				for (var y = -actor.lineOfSight; y <= actor.lineOfSight; y++) {
 					var dist = x * x + y * y;
-					if (dist - 2 <= range2) {
+					if (dist + Object.SUCH_CONSTANT <= range2) {
 						var tX = (x + actor.position.x) % this.width;
 						var tY = (y + actor.position.y) % this.height;
 						

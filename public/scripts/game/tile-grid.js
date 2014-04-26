@@ -11,16 +11,19 @@ define(['pixi', 'game/tiled-sprite', 'game/tiled-texture'],
 
 				this.grid = grid;
 				this.tileSize = tileSize;
-				this.renderedTiles = new Array(this.grid.length);
+				this.tWidth = this.grid.length;
+				this.tHeight = this.grid[0].length;
+
+				this.renderedTiles = new Array(this.tWidth);
 				for (var x = 0; x < this.grid.length; x++) {
-					this.renderedTiles[x] = new Array(this.grid[x].length);
+					this.renderedTiles[x] = new Array(this.tHeight);
 				}
 
 				TiledTexture.fromFile(image, this.tileSize, this.tileSize, function(texture) {
 					self._tiledSprite = new TiledSprite(texture);
 					self._gridTexture = new pixi.RenderTexture(
-						grid.length * self.tileSize, 
-						grid[0].length * self.tileSize
+						self.tWidth * self.tileSize, 
+						self.tHeight * self.tileSize
 					);
 
 					pixi.Sprite.call(self, self._gridTexture);
@@ -32,11 +35,17 @@ define(['pixi', 'game/tiled-sprite', 'game/tiled-texture'],
 				renderAround: function(x, y, range) {
 					var range2 = range * range;
 					for (var rX = -range; rX <= range; rX++) {
-						var pX = x + rX;
 						for (var rY = -range; rY <= range; rY++) {
-							var pY = y + rY; 
+							var pX = (x + rX) % this.tWidth;
+							var pY = (y + rY) % this.tHeight;
+
+							while (pX < 0)
+								pX += this.tWidth;
+							while (pY < 0)
+								pY += this.tHeight;
+
 							var dist = rX * rX + rY * rY;
-							if (dist - 2 <= range2) {
+							if (dist + Object.SUCH_CONSTANT <= range2) {
 								if (!this.renderedTiles[pX][pY]) {
 									this._tiledSprite.tileY = this.grid[pX][pY];
 									this._gridTexture.render(

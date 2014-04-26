@@ -1,8 +1,6 @@
 var actions = {
+	/* { x, y } */
 	move: function(actor, args) {
-		/*
-		{ x, y }
-		*/
 		if (args.x > 0)
 			args.x = Math.min(args.x, actor.moveSpeed);
 		else if (args.x < 0)
@@ -32,15 +30,11 @@ var actions = {
 			}
 		}
 	},
+	/* { itemNo } */
 	useItem: function(actor, args) {
-		/*
-		{ itemNo }
-		*/
 	},
+	/* { itemNo } */
 	dropItem: function(actor, args) {
-		/*
-		{ itemNo }
-		*/
 	},
 };
 

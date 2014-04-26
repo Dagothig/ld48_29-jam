@@ -28,6 +28,7 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor'],
 						self.gridActor = new Actor(self.grid);
 						self.gridActor.zOrder = -1;
 						self.map.addActor(self.gridActor);
+						self.map.activateWrapping(self.grid.tWidth, self.grid.tHeight);
 					}
 				});
 

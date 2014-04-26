@@ -87,6 +87,9 @@ define(['pixi'],
 				},
 				set backgroundColor(val) {
 					this.stage.backgroundColor = val;
+				},
+
+				activateWrapping: function(width, height) {
 				}
 			}
 		);

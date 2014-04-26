@@ -1,5 +1,7 @@
 'use strict';
 
+Object.SUCH_CONSTANT = -2;
+
 Object.shortProps = function shortProps(obj, props) {
 	for (var key in props)
 		Object.defineProperty(obj, key, Object.getOwnPropertyDescriptor(props, key));
