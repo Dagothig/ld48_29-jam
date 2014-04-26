@@ -8,15 +8,15 @@
 	</head>
 	<body>
 		<div style="display: none">
-			<img id="img-player" src="res/player.png"></img>
-			<img id="img-tileset" src="res/tileset.png"></img>
-			<img id="img-sword" src="res/sword.png"></img>
-			<img id="img-bomb" src="res/bomb.png"></img>
-			<img id="img-treasure" src="res/treasure.png"></img>
+			<img id="img-player" src="/res/player.png"></img>
+			<img id="img-tileset" src="/res/tileset.png"></img>
+			<img id="img-sword" src="/res/sword.png"></img>
+			<img id="img-bomb" src="/res/bomb.png"></img>
+			<img id="img-treasure" src="/res/treasure.png"></img>
 		</div>
 		<div id="game-container"></div>
 		<div id="heart-container">
-			<img src="res/heart.png"></img>
+			<img src="/res/heart.png"></img>
 			x
 			<span id="health-amount">6</span>
 		</div>
@@ -38,20 +38,19 @@
 		</div>
 
 		<script src="/scripts/libs/require.js" data-main="/scripts/main"></script>
-		<script src="/scripts/libs/zepto.min.js"></script>
-		<script src="/scripts/libs/underscore-min.js"></script>
 		<script type="text/javascript">
-			$(function(){
-				$('.kb-switch').on('click', function(){
+			window.onload = function(){
+				var switchElem = document.getElementsByClassName('kb-switch')[0];
+				switchElem.onclick = function() {
 					if (window.KB_MODE == "querty") {
 						window.KB_MODE = "azerty";
-						$(this).find('strong').text("QUERTY");
+						switchElem.getElementsByTagName('strong')[0].innerText = "QUERTY";
 					} else {
 						window.KB_MODE = "querty";
-						$(this).find('strong').text("AZERTY");
+						switchElem.getElementsByTagName('strong')[0].innerText = "AZERTY";
 					}
-				});
-			});
+				};
+			};
 		</script>
 	</body>
 </html>
