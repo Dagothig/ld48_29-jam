@@ -5,15 +5,17 @@ module.exports = Object.define(
 	function Player(socket) {
 		Character.call(this);
 
-		this.socket = socket;
 		var self = this;
+
+		this.socket = socket;
+		this.socket.playerId = this.id;
 		this.socket.on('action-request', function(data) {
 			self.requestedAction = {
 				action: data.action,
 				args: data.args
 			};
 		});
-		
 	}, {
+
 	}
 );

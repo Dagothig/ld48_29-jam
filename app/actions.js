@@ -16,38 +16,19 @@ var actions = {
 		var posX = actor.position.x + args.x;
 		var posY = actor.position.y + args.y;
 
-		var tile = this.grid.getTileFor(posX, posY);
-		if (tile.walkable) {
+		var pos = this.grid.getTileFor(posX, posY);
+		if (pos.tile.walkable) {
 			actor.position.x = posX;
 			actor.position.y = posY;
-			var visibleTiles = this.grid.getTilesPosWithin(
-				posX, posY, actor.lineOfSight
-			);
-			var tiles = this.grid.getTilesFor(visibleTiles);
+			actor.ticksBeforeAction = 5;
 
 			if (actor.socket) {
 				actor.socket.emit('update', {
-					'display': {
-						actors: tiles.actors,
-						tiles: tiles.tiles,
+					'move': {
 						posX: visibleTiles.tilesX,
 						posY: visibleTiles.tilesY
-					},
-					'hide': {
-						posX: 'all',
-						posY: 'all'
 					}
 				});
-			}
-			for (var key in tiles.actors) {
-				var act = tiles.actors[key];
-				if (act.socket) {
-					actor.socket.emit('update', {
-						'display': {
-
-						}
-					});
-				}
 			}
 		}
 	},

@@ -1,5 +1,8 @@
+var id = 0;
+
 module.exports = Object.define(
 	function Actor() {
+		this.id = id++;
 		this.position = {
 			x: null,
 			y: null

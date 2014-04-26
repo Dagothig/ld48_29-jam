@@ -66,9 +66,34 @@ module.exports = Object.define(
 		},
 		getTileFor: function(x, y) {
 			return {
-				actors: this.tiles[LayerTypes.ACTORS][x][y],
-				tiles: this.tiles[LayerTypes.TILES][x][y]
+				actor: this.tiles[LayerTypes.ACTORS][x][y],
+				tile: this.tiles[LayerTypes.TILES][x][y]
 			};
+		},
+		actorsWithinLOS: function(actor) {
+			var actors = {};
+			var range2 = actor.lineOfSight * actor.lineOfSight;
+
+			for (var x = -actor.lineOfSight; x <= actor.lineOfSight ; x++) {
+				for (var y = -actor.lineOfSight; y <= actor.lineOfSight; y++) {
+					var dist = x * x + y * y;
+					if (dist <= range2) {
+						var tX = (x + pX) % this.width;
+						var tY = (y + pY) % this.height;
+						
+						while (tX < 0)
+							tX += this.width;
+						while (tY < 0)
+							tY += this.height;
+
+						var act = this.tiles[LayerTypes.ACTORS][tX][tY];
+						if (act && actor !== act)
+							actors[act.id] = act;
+					}
+				}
+			}
+
+			return actors;
 		}
 	}
 );

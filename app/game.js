@@ -12,6 +12,7 @@ module.exports = Object.define(
 
 		// Game loop
 		function gameLoop() {
+			// Perform actions
 			self.actors.forEach(function(actor) {
 				if (!(--actor.ticksBeforeAction)) {
 					var action = actions[actor.requestedAction.action];
@@ -22,9 +23,24 @@ module.exports = Object.define(
 					}
 				}
 			});
+
+			// Display loop
+			self.actors.forEach(function(actor) {
+				var actors;
+				if (actor.lineOfSight)
+					actors = self.grid.actorsWithinLOS(actor);
+				if (actor.socket)
+					actor.socket.emit('display', actors);
+			});
 		}
 		require('./looper')(gameLoop, 50);
 	}, {
-
+		connectPlayer: function(socket) {
+			var player = new Player(socket);
+			this.actors[player.id] = player;
+		},
+		disconnectPlayer: function(socket) {
+			delete this.actors[socket.playerId];
+		}
 	}
 );
