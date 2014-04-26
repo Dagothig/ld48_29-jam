@@ -3,20 +3,21 @@ var LayerTypes = require('./layer-types');
 
 module.exports = Object.define(
 	function Grid(width, height) {
+		var self = this;
 		this.width = width;
 		this.height = height;
 		this.tiles = new Array(Object.keys(LayerTypes).length);
+
+		// Fill in ground end empty layer type arrays
 		for (var n = 0; n < this.tiles.length; n++) {
 			this.tiles[n] = new Array(this.width);
 			for (var x = 0; x < this.width; x++) {
 				this.tiles[n][x] = new Array(this.height);
 				for (var y = 0; y < this.height; y++) {
 					switch (n) {
-						case LayerTypes.TILES: 
-							if (Math.random() < 0.25)
-								this.tiles[n][x][y] = TileTypes.ROCK.tileId;
-							else
-								this.tiles[n][x][y] = TileTypes.ROCKY_GROUND.tileId;
+						case LayerTypes.TILES:
+							//if (Math.random() < 0.25)
+							this.tiles[n][x][y] = TileTypes.ROCK.tileId;
 							break;
 						case LayerTypes.ACTORS:
 							this.tiles[n][x][y] = [];
@@ -27,6 +28,48 @@ module.exports = Object.define(
 				}
 			}
 		}
+
+		// Generate dungeons
+		var splitAmt = Math.floor(this.width/6);
+		var walls = [];
+		var sections = [{x1: 0, y1: 0, x2: this.width, y2: this.height}];
+		var newSmallerSections = [];
+		var splitOnX = true;
+		for (var i = 0; i < splitAmt; i++) {
+			sections.forEach(function(section) {
+				var width = section.x2-section.x1;
+				var width = section.y2-section.y1;
+				var splitPos = Math.floor(Math.random() * (((splitOnX ? width : height)/2)+1));
+				splitPos += Math.floor((splitOnX ? width : height)/2);
+				newSmallerSections.push({
+					x1: section.x1,
+					y1: section.y1,
+					x2: splitOnX ? splitPos : width,
+					y2: splitOnX ? height : splitPos
+				});
+				newSmallerSections.push({
+					x1: splitOnX ? splitPos : section.x1,
+					y1: splitOnX ? section.y1 : splitPos,
+					x2: section.x2,
+					y2: section.y2
+				});
+			});
+			sections = newSmallerSections;
+			splitOnX = !splitOnX;
+		};
+		console.log(sections);
+		var wut = true;
+		sections.forEach(function(section) {
+			if (wut) {
+				for (var x = 0; x < section.x2-section.x1; x++) {
+					for (var y = 0; y < section.y2-section.y1; y++) {
+						self.tiles[LayerTypes.TILES][x][y] = TileTypes.ROCKY_GROUND.tileId;
+					}
+				}
+			}
+			wut = !wut;
+		});
+
 	}, {
 		getTilesPosWithin: function(pX, pY, range) {
 			var range2 = range * range;
@@ -72,7 +115,7 @@ module.exports = Object.define(
 				var pos = this.getTileFor(x, y);
 				if (TileTypes.fromId(pos.tile).walkable && !Object.keys(pos.actors).length) {
 					pt = {
-						x: x, 
+						x: x,
 						y: y
 					};
 				}
