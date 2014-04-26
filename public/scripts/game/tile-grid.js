@@ -49,10 +49,10 @@ define(['pixi', 'game/tiled-sprite', 'game/tiled-texture'],
 								if (!this.renderedTiles[pX][pY]) {
 									this._tiledSprite.tileY = this.grid[pX][pY];
 									this._gridTexture.render(
-										this._tiledSprite, 
+										this._tiledSprite,
 										{
 											x: pX * this.tileSize,
-											y: pY * this.tileSize 
+											y: pY * this.tileSize
 										}
 									);
 									this.renderedTiles[pX][pY] = true;
