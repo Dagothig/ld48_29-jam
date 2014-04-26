@@ -12,6 +12,10 @@ define(
 						this.sprite.update(delta);
 				},
 
+				render: function(renderer) {
+
+				},
+
 				remove: function() {
 					this.shouldBeRemoved = true;
 				},
