@@ -15,7 +15,7 @@ define(['pixi', 'input-manager', 'states/game-state'],
 
 				this.initGameLoop();
 
-				this.currentState = new GameState();
+				this.currentState = new GameState(this);
 			}, {
 				initRenderer: function() {
 					pixi.scaleModes.DEFAULT = pixi.scaleModes.NEAREST;
@@ -25,6 +25,8 @@ define(['pixi', 'input-manager', 'states/game-state'],
 					var self = this;
 					this.resize = function() {
 						self.renderer.resize(self.renderer.view.offsetWidth, self.renderer.view.offsetHeight);
+						if (self.onresize)
+							self.onresize();
 					}
 					window.addEventListener('resize', this.resize);
 					this.resize();

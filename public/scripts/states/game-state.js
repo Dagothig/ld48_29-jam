@@ -3,13 +3,17 @@
 define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor'],
 	function(Map, io, pixi, TileGrid, Actor) {
 		return Object.define(
-			function GameState() {
+			function GameState(game) {
 				var self = this;
+				this.game = game;
+				this.game.onresize = function() {
+					self.updateCamera();
+				}
 				this.tileSize = 24;
 				this.map = new Map(0x201015);
 				this.player = {
 					position: {},
-					lineOfSight: 4
+					lineOfSight: 6
 				};
 
 				this.socket = io.connect('/');
@@ -42,12 +46,23 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor'],
 					renderer.render(this.map.stage);
 				},
 
+				updateCamera: function() {
+					this.map.cameraX = 
+						(this.player.position.x * this.tileSize) -
+						(this.game.container.offsetWidth / 2) +
+						12;
+
+					this.map.cameraY = 
+						(this.player.position.y * this.tileSize) -
+						(this.game.container.offsetHeight / 2) + 
+						12;
+				},
+
 				receiveUpdate: function(data) {
 					if (data.position) {
 						this.player.position.x = data.position.x;
 						this.player.position.y = data.position.y;
-						this.map.cameraX = this.player.position.x * this.tileSize;
-						this.map.cameraY = this.player.position.y * this.tileSize;
+
 						if (this.grid) {
 							this.grid.renderAround(
 								this.player.position.x, 
@@ -55,6 +70,8 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor'],
 								this.player.lineOfSight
 							);
 						}
+
+						this.updateCamera();
 					}
 				},
 				updateDisplay: function(data) {

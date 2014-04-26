@@ -35,16 +35,19 @@ define(['pixi', 'game/tiled-sprite', 'game/tiled-texture'],
 					var range2 = range * range;
 					for (var rX = -range; rX <= range; rX++) {
 						var pX = x + rX;
-						this._tiledSprite.position.x = pX * this.tileSize;
 						for (var rY = -range; rY <= range; rY++) {
 							var pY = y + rY; 
-							this._tiledSprite.position.y = pY * this.tileSize;
-							
 							var dist = rX * rX + rY * rY;
-							if (dist <= range2) {
+							if (dist - 2 <= range2) {
 								if (!this.renderedTiles[pX][pY]) {
 									this._tiledSprite.tileY = this.grid[pX][pY];
-									this._gridTexture.render(this._tiledSprite);
+									this._gridTexture.render(
+										this._tiledSprite, 
+										{
+											x: pX * this.tileSize,
+											y: pY * this.tileSize 
+										}
+									);
 									this.renderedTiles[pX][pY] = true;
 								}
 							}
