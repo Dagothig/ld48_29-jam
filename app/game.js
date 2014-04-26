@@ -7,7 +7,7 @@ module.exports = Object.define(
 		var self = this;
 
 		this.app = app;
-		this.grid = new Grid(10, 10);
+		this.grid = new Grid(20, 20);
 		this.actors = [];
 
 		// Game loop
@@ -19,8 +19,8 @@ module.exports = Object.define(
 						var action = actions[actor.requestedAction.action];
 
 						// In case we send an invalid action we don't want lock out
-						if (!action) actor.requestedAction = null;
-
+						if (!action)
+							return actor.requestedAction = null;
 						action.call(self, actor, actor.requestedAction.args);
 					} else {
 						actor.ticksBeforeAction = 1;

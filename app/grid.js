@@ -13,7 +13,7 @@ module.exports = Object.define(
 				for (var y = 0; y < this.height; y++) {
 					switch (n) {
 						case LayerTypes.TILES: 
-							if (Math.random() < 0.5)
+							if (Math.random() < 0.25)
 								this.tiles[n][x][y] = TileTypes.ROCK.tileId;
 							else
 								this.tiles[n][x][y] = TileTypes.GRASS.tileId;
@@ -34,13 +34,8 @@ module.exports = Object.define(
 				for (var y = -range; y <= range; y++) {
 					var dist = x * x + y * y;
 					if (dist + Object.SUCH_CONSTANT <= range2) {
-						var tX = (x + pX) % this.width;
-						var tY = (y + pY) % this.height;
-
-						while (tX < 0)
-							tX += this.width;
-						while (tY < 0)
-							tY += this.height;
+						var tX = this.validX(pX + x);
+						var tY = this.validY(pY + y);
 
 						tilesX.push(tX);
 						tilesY.push(tY);
@@ -56,10 +51,10 @@ module.exports = Object.define(
 			return this.tiles[LayerTypes.TILES];
 		},
 		putActor: function(actor) {
-			this.tiles[LayerTypes.ACTORS][actor.position.x][actor.position.y].push(actor);
+			this.tiles[LayerTypes.ACTORS][this.validX(actor.position.x)][this.validY(actor.position.y)].push(actor);
 		},
 		removeActor: function(actor) {
-			var arr = this.tiles[LayerTypes.ACTORS][actor.position.x][actor.position.y];
+			var arr = this.tiles[LayerTypes.ACTORS][this.validX(actor.position.x)][this.validY(actor.position.y)];
 			var i = arr.indexOf(actor);
 			if (i >= 0)
 				arr.splice(i, 1);
@@ -106,6 +101,9 @@ module.exports = Object.define(
 			};
 		},
 		getTileFor: function(x, y) {
+			x = this.validX(x);
+			y = this.validY(y);
+
 			return {
 				actors: this.tiles[LayerTypes.ACTORS][x][y],
 				tile: this.tiles[LayerTypes.TILES][x][y]
@@ -119,13 +117,8 @@ module.exports = Object.define(
 				for (var y = -actor.lineOfSight; y <= actor.lineOfSight; y++) {
 					var dist = x * x + y * y;
 					if (dist + Object.SUCH_CONSTANT <= range2) {
-						var tX = (x + actor.position.x) % this.width;
-						var tY = (y + actor.position.y) % this.height;
-						
-						while (tX < 0)
-							tX += this.width;
-						while (tY < 0)
-							tY += this.height;
+						var tX = this.validX(actor.position.x + x);
+						var tY = this.validY(actor.position.y + y);
 
 						var acts = this.tiles[LayerTypes.ACTORS][tX][tY];
 						acts.forEach(function(act) {
@@ -137,6 +130,21 @@ module.exports = Object.define(
 			}
 
 			return actors;
+		},
+
+		validX: function(x) {
+			x = x % this.width;
+			while (x < 0)
+				x += this.width;
+
+			return x;
+		},
+		validY: function(y) {
+			y = y % this.height;
+			while (y < 0)
+				y += this.height;
+
+			return y;
 		}
 	}
 );

@@ -37,27 +37,43 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 					self.receiveUpdate.call(self, data);
 				});
 
-				var IM = this.game.inputManager;
-				var MOVEMENT_KEYS = [IM.KEYS.LEFT, IM.KEYS.RIGHT, IM.KEYS.UP, IM.KEYS.DOWN];
-				for (var i = MOVEMENT_KEYS.length - 1; i >= 0; i--) {
-					IM.bind(MOVEMENT_KEYS[i], IM.ACTIONS.PRESSED, function() {
-						var args = { x: 0, y: 0 };
-						switch(MOVEMENT_KEYS[i]) {
-							case IM.KEYS.LEFT:
-								args.x = -1;
-							case IM.KEYS.RIGHT:
-								args.x = 1;
-							case IM.KEYS.UP:
-								args.y = 1;
-							case IM.KEYS.DOWN:
-								args.y = -1;
-						}
-						self.socket.emit('action-request', {
-							action: 'move',
-							args: args
-						});
+				function emitMovement(x, y) {
+					self.socket.emit('action-request', {
+						action: 'move',
+						args: {x: x, y: y}
 					});
-				};
+				}
+				var IM = this.game.inputManager;
+				var movementKeys = [
+					{
+						key: IM.KEYS.LEFT,
+						pressed: function() {
+							emitMovement(-1, 0);
+						}
+					},
+					{
+						key: IM.KEYS.RIGHT,
+						pressed: function() {
+							emitMovement(1, 0);
+						}
+					},
+					{
+						key: IM.KEYS.UP,
+						pressed: function() {
+							emitMovement(0, -1);
+						}
+					},
+					{
+						key: IM.KEYS.DOWN,
+						pressed: function() {
+							emitMovement(0, 1);
+						}
+					}
+				];
+				movementKeys.forEach(function(movKey) {
+					IM.bind(movKey.key, IM.ACTIONS.PRESSED, movKey.pressed);
+				});
+
 			}, {
 				update: function(delta) {
 					this.map.update(delta);

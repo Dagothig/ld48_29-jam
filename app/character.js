@@ -5,7 +5,7 @@ module.exports = Object.define(
 	function Character() {
 		Actor.call(this);
 	
-		this.lineOfSight = 4;
+		this.lineOfSight = 6;
 		this.moveSpeed = 1;
 		this.items = {};
 		this.selectedItemNo = null;

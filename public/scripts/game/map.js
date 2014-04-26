@@ -136,8 +136,6 @@ define(['pixi', 'game/player'],
 				},
 
 				activateWrapping: function(width, height) {
-					return;
-
 					this.wrapping = true;
 					this.width = width;
 					this.height = height;

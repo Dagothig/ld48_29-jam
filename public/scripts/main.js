@@ -28,6 +28,7 @@ define(
 			textures[imageId] = text;
 			return text;
 		}
+		pixi.scaleModes.DEFAULT = pixi.scaleModes.NEAREST;
 
 		game = new Game(document.getElementById('game-container'));
 	}
