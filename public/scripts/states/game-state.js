@@ -11,12 +11,8 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 				}
 				this.tileSize = 24;
 				this.map = new Map(0x201015);
-				this.playerActor = new Player();
+				this.player = new Player(this.map);
 				this.objects = [];
-				this.player = {
-					position: {},
-					lineOfSight: 6
-				};
 
 				this.socket = io.connect('/');
 				this.socket.on('map', function(data) {
@@ -43,22 +39,21 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 			}, {
 				update: function(delta) {
 					this.map.update(delta);
-					this.playerActor.update(delta);
+					this.player.update(delta);
 				},
 				render: function(renderer) {
 					renderer.render(this.map.stage);
-					this.playerActor.render(delta);
 				},
 
 				updateCamera: function() {
-					this.map.cameraX = 
+					this.map.cameraX =
 						(this.player.position.x * this.tileSize) -
 						(this.game.container.offsetWidth / 2) +
 						12;
 
-					this.map.cameraY = 
+					this.map.cameraY =
 						(this.player.position.y * this.tileSize) -
-						(this.game.container.offsetHeight / 2) + 
+						(this.game.container.offsetHeight / 2) +
 						12;
 				},
 

@@ -11,15 +11,22 @@ define(['pixi'],
 			}, {
 				addActor: function(actor) {
 					var i = this.actors.length;
-					if (i === 0)
-						this.actors.push(actor)
-					else {
+					var added = false;
+					if (i !== 0) {
 						while (i--) {
-							if (this.actors[i].zOrder < actor.zOrder)
+							if (this.actors[i].zOrder < actor.zOrder) {
 								this.actors.splice(i, 0, actor);
+								this.container.children.splice(i, 0, actor.sprite);
+								added = true;
+								break;
+							}
 						}
 					}
-					this.container.addChild(actor.sprite);
+					if (!added) {
+						this.actors.splice(0, 0, actor);
+						this.container.children.splice(0, 0, actor.sprite);
+					}
+					console.log(this.container.children);
 				},
 				update: function(delta) {
 					var i = this.actors.length;
@@ -30,11 +37,12 @@ define(['pixi'],
 						}
 						actor.update(delta);
 
-						if (actor.shouldBeRemoved) 
+						if (actor.shouldBeRemoved)
 							this.actors.splice(i, 1);
 					}
 				},
 				updateActorOrder: function(actor, currentIndex) {
+					return;
 					actor.needsZUpdate = false;
 
 					// Check down the list
@@ -46,7 +54,7 @@ define(['pixi'],
 							} else {
 								break;
 							}
-						} else { 
+						} else {
 							this.actors[i] = actor;
 							this.actors[i + 1] = current;
 						}

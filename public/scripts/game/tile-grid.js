@@ -19,7 +19,7 @@ define(['pixi', 'game/tiled-sprite', 'game/tiled-texture'],
 				TiledTexture.fromFile(image, this.tileSize, this.tileSize, function(texture) {
 					self._tiledSprite = new TiledSprite(texture);
 					self._gridTexture = new pixi.RenderTexture(
-						grid.length * self.tileSize, 
+						grid.length * self.tileSize,
 						grid[0].length * self.tileSize
 					);
 
@@ -34,16 +34,16 @@ define(['pixi', 'game/tiled-sprite', 'game/tiled-texture'],
 					for (var rX = -range; rX <= range; rX++) {
 						var pX = x + rX;
 						for (var rY = -range; rY <= range; rY++) {
-							var pY = y + rY; 
+							var pY = y + rY;
 							var dist = rX * rX + rY * rY;
 							if (dist - 2 <= range2) {
 								if (!this.renderedTiles[pX][pY]) {
 									this._tiledSprite.tileY = this.grid[pX][pY];
 									this._gridTexture.render(
-										this._tiledSprite, 
+										this._tiledSprite,
 										{
 											x: pX * this.tileSize,
-											y: pY * this.tileSize 
+											y: pY * this.tileSize
 										}
 									);
 									this.renderedTiles[pX][pY] = true;
