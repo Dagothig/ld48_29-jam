@@ -8,12 +8,28 @@ module.exports = Object.define(
 		this.lineOfSight = 8;
 		this.moveSpeed = 1;
 		this.items = [];
-		this.itemsMax = 8;
-		this.selectedItemNo = null;
-		this.health = 6;
+		this.itemsMax = 4;
+		this._health = 6;
 	}, {
-		get item() {
-			return this.items[this.selectedItemNo];
+		get health() {
+			return this._health;
+		},
+		set health(val) {
+			this._health = val;
+			if (this.socket) {
+				this.socket.emit('update', {
+					health: val
+				});
+			}
+			if (this._health <= 0) {
+				this.requestAction = {
+					action: 'die',
+					args: { items: this.items }
+				};
+				this.ticksBeforeAction = 0;
+				if (this.socket)
+					this.socket.emit('death');
+			}
 		}
 	}
 );

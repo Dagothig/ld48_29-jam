@@ -39,6 +39,7 @@ module.exports = Object.define(
 						var act = actors[key];
 						info[key] = {
 							position: act.position,
+							sprite: act.sprite,
 							tileY: act.tileY
 						}
 					}
@@ -55,7 +56,9 @@ module.exports = Object.define(
 			player.position = pt;
 			this.grid.putActor(player);
 			socket.emit('update', {
-				position: pt
+				position: pt,
+				health: player.health,
+				lineOfSight: player.lineOfSight
 			});
 			socket.emit('map', this.grid.map);
 		},

@@ -4,9 +4,8 @@ define(['pixi', 'game/actor', 'game/tiled-texture', 'game/tiled-sprite'],
 	function(pixi, Actor, TiledTexture, TiledSprite) {
 		return Object.define(
 			Actor,
-			function Player(map) {
+			function Player(map, filename) {
 				var self = this;
-				this.lineOfSight = 8;
 				this._map = map;
 				this._position = {
 					get x() {
@@ -23,7 +22,7 @@ define(['pixi', 'game/actor', 'game/tiled-texture', 'game/tiled-sprite'],
 					}
 				};
 
-				var texture = new TiledTexture(pixi.getTexture('img-player'), 24, 24);
+				var texture = new TiledTexture(pixi.getTexture(filename || 'img-player'), 24, 24);
 				var sprite = new TiledSprite(texture);
 				Actor.call(self, sprite);
 			}, {

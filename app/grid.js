@@ -20,6 +20,8 @@ module.exports = Object.define(
 							break;
 						case LayerTypes.ACTORS:
 							this.tiles[n][x][y] = [];
+							if(Math.random() < 0.05)
+								this.tiles[n][x][y].push(new (require('./treasure'))(x, y, [require('./items').broadsword]));
 							break;
 					}
 				}

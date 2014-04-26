@@ -1,9 +1,14 @@
 var Actor = require('./actor');
 
-Object.define(
+module.exports = Object.define(
 	Actor,
-	function Treasure() {
-		this.items = [];
+	function Treasure(x, y, items) {
+		Actor.call(this);
+
+		this.position.x = x;
+		this.position.y = y;
+		this.items = items;
+		this.sprite = 'img-treasure';
 	}, {
 
 	}

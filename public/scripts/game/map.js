@@ -85,7 +85,7 @@ define(['pixi', 'game/player'],
 						var current = this.renderedActors[key];
 						var toDisplay = data[key];
 						if (!current) {
-							current = new Player(this);
+							current = new Player(this, toDisplay.sprite);
 							this.renderedActors[key] = current;
 							this.addActor(current);
 						}
