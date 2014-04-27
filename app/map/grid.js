@@ -148,7 +148,7 @@ module.exports = Object.define(
 					forEachRect(roomRect, function(x, y) {
 						if (Math.random() < 0.01) { // Treasure
 							self.tiles[LayerTypes.ACTORS][x][y].push(new Treasure(x, y));
-						} else if (Math.random() < 0.005) { // Trolls
+						} else if (Math.random() < 0.005 * 0) { // Trolls
 							var troll = new Troll(x, y);
 							self.actors.push(troll);
 							self.tiles[LayerTypes.ACTORS][x][y].push(troll);

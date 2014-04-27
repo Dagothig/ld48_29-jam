@@ -4,6 +4,8 @@ var Player = require('./characters/player');
 var Grid = require('./map/grid');
 var actions = require('./actions');
 var Looper = require('./looper');
+var Mob = require('./characters/mob');
+var Treasure = require('./items/treasure');
 
 module.exports = Object.define(
 	function Game(app) {
@@ -61,6 +63,8 @@ module.exports = Object.define(
 						info[key] = data;
 					}
 					actor.socket.emit('display', info);
+				} else if (actor instanceof Mob) {
+					actor.updateSeenActors(actors);
 				}
 			});
 		}
@@ -81,8 +85,11 @@ module.exports = Object.define(
 		},
 		disconnectPlayer: function(socket) {
 			if (this.actors[socket.playerId]) {
-				this.grid.removeActor(this.actors[socket.playerId]);
+				var actor = this.actors[socket.playerId];
+				this.grid.removeActor(actor);
 				delete this.actors[socket.playerId];
+
+				Treasure.addForTile(this.grid, actor.position.x, actor.position.y, actor.items);
 			}
 		}
 	}
