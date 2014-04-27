@@ -85,10 +85,13 @@ define(['pixi', 'game/player', 'game/actor'],
 						var current = this.renderedActors[key];
 						var toDisplay = data[key];
 						if (!current) {
+							console.log(toDisplay);
+							var tileW = toDisplay.tileW || 24;
+							var tileH = toDisplay.tileH || 24;
 							if (toDisplay.animated) {
-								current = Actor.fromAnimated(toDisplay.sprite, toDisplay.animated, this);
+									current = Actor.fromAnimated(toDisplay.sprite, toDisplay.animated, this, tileW, tileH);
 							} else {
-								current = new Player(this, toDisplay.sprite);
+								current = new Player(this, toDisplay.sprite, tileW, tileH);
 							}
 							this.renderedActors[key] = current;
 							if (toDisplay.zOrder) {
@@ -114,7 +117,7 @@ define(['pixi', 'game/player', 'game/actor'],
 						var diffX = toDisplay.position.x - player.position.x;
 						var diffY = toDisplay.position.y - player.position.y;
 						var dist = diffX * diffX + diffY * diffY;
-						current.sprite.alpha = 
+						current.sprite.alpha =
 							Math.pow((range2 - (dist + Object.SUCH_CONSTANT)) / range2, 2);
 
 						current.updated = true;

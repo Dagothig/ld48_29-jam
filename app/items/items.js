@@ -88,6 +88,7 @@ module.exports = {
 					actor.position.y,
 					actor,
 					this.grid,
+					this.actors,
 					args
 				);
 		}
