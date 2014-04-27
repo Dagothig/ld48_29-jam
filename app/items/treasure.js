@@ -18,12 +18,14 @@ var Treasure = Object.define(
 			var amountOfItemsInLoot = Math.random() < 0.1 ? 2 : 1;
 			for (var i = 0; i < amountOfItemsInLoot; i++) { // Small chances for 2 items in loot
 				var specialNumberOfTheWeek = Math.random();
-				if (specialNumberOfTheWeek < 0.1) // 30% chances firejet
+				if (specialNumberOfTheWeek < 0.2) // 20% chances firejet
 					this.items.push(Items.firejet);
-				else if (specialNumberOfTheWeek < 0.8) // 50% chance sword
+				else if (specialNumberOfTheWeek < 0.4) // 20% chance sword
 					this.items.push(Items.broadsword);
-				else // 10% cake
+				else if (specialNumberOfTheWeek < 0.6) // 20% cake
 					this.items.push(Items.cake);
+				else // 50% chance bomb
+					this.items.push(Items.bomb);
 			}
 		} else {
 			this.items = items;
