@@ -1,6 +1,6 @@
 'use strict';
 
-var Actor = require('./actor');
+var Actor = require('./../actor');
 
 module.exports = Object.define(
 	Actor,

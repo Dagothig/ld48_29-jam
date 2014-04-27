@@ -97,5 +97,13 @@ module.exports = {
 				args
 			);
 		}
+	},
+	cake: {
+		name: 'cake',
+		activate: function(actor, args) {
+			actor.requestedAction = null;
+			actor.ticksBeforeAction = 3;
+			delete actor.items[args.itemNo];
+		}
 	}
 };

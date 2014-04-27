@@ -14,7 +14,7 @@ module.exports = Object.define(
 
 		// If no items where given let's add some randomly
 		if (items === undefined) {
-			this.items = [];
+			this.items = [Items.cake];/*
 			var amountOfItemsInLoot = Math.random() < 0.1 ? 2 : 1;
 			for (var i = 0; i < amountOfItemsInLoot; i++) { // Small chances for 2 items in loot
 				var specialNumberOfTheWeek = Math.random();
@@ -24,7 +24,7 @@ module.exports = Object.define(
 					this.items.push(Items.broadsword);
 				else // 50% chance bomb
 					this.items.push(Items.bomb);
-			}
+			}*/
 		} else {
 			this.items = items;
 		}
