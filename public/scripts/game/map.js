@@ -101,9 +101,15 @@ define(['pixi', 'game/player', 'game/actor'],
 						}
 						current.position.x = toDisplay.position.x;
 						current.position.y = toDisplay.position.y;
-						current.sprite.tileX = toDisplay.tileX || 0;
-						current.sprite.tileY = toDisplay.tileY || 0;
-						current.sprite.rotation = toDisplay.rotation || 0;
+
+						if ('tileX' in toDisplay)
+							current.sprite.tileX = toDisplay.tileX;
+						if ('tileY' in toDisplay)
+							current.sprite.tileY = toDisplay.tileY;
+
+						if ('rotation' in toDisplay)
+							current.sprite.rotation = toDisplay.rotation;
+
 						if (toDisplay.decal)
 							current.sprite.decal = toDisplay.decal;
 						if (toDisplay.rotationCentered) {

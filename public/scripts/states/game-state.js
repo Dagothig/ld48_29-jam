@@ -36,6 +36,20 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 					self.map.grid = self.grid;
 				});
 
+				this.socket.on('update-map', function(data) {
+					if (self.grid) {
+						for (var key in data) {
+							var val = data[key];
+							self.grid.grid[val.x][val.y] = val.newId;
+						}
+						self.grid.renderAround(
+							self.player.position.x,
+							self.player.position.y,
+							self.player.lineOfSight
+						);
+					}
+				});
+
 				this.socket.on('display', function(data) {
 					self.updateDisplay.call(self, data);
 				});

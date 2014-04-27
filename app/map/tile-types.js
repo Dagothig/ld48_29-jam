@@ -3,7 +3,9 @@
 var types = {
 	ROCK: {
 		tileId: 0,
-		isWall: true
+		isWall: true,
+		breakable: true,
+		brokenId: 2
 	},
 	GRASS: {
 		tileId: 1,
@@ -26,7 +28,9 @@ var types = {
 	},
 	GRAY_BRICK: {
 		tileId: 6,
-		isWall: true
+		isWall: true,
+		breakable: true,
+		brokenId: 7
 	},
 	GRAY_GROUND: {
 		tileId: 7,

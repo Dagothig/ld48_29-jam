@@ -56,8 +56,8 @@ module.exports = Object.define(
 							'rotation',
 							'rotationCentered',
 							'animated',
-							'tileH',
-							'tileY'
+							'tileW',
+							'tileH'
 						].forEach(function(key) {
 							if (key in act)
 								data[key] = act[key];

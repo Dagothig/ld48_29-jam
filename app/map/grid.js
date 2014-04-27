@@ -289,6 +289,30 @@ module.exports = Object.define(
 			return actors;
 		},
 
+		destroyTilesAt: function(x1, y1, x2, y2) {
+			var tiles = [];
+			for (var x = x1; x <= x2; x++) {
+				for (var y = y1; y <= y2; y++) {
+					var vx = this.validX(x);
+					var vy = this.validY(y);
+					var type = TileTypes.fromId(this.tiles[LayerTypes.TILES][vx][vy]);
+					if (type.breakable) {
+						this.tiles[LayerTypes.TILES][vx][vy] = type.brokenId;
+						tiles.push({
+							x: vx,
+							y: vy,
+							newId: type.brokenId
+						});
+					}
+				}
+			}
+			for (var key in this.actors) {
+				var actor = this.actors[key];
+				if (actor.socket)
+					actor.socket.emit('update-map', tiles);
+			}
+		},
+
 		validX: function(x) {
 			x = x % this.width;
 			while (x < 0)

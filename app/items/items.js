@@ -82,6 +82,17 @@ module.exports = {
 		activate: function(actor, args) {
 			actor.requestedAction = null;
 			actor.ticksBeforeAction = 5;
+			delete actor.items[args.itemNo];
+
+			var items = [];
+			actor.items.forEach(function(item, i) {
+				items[i] = item.name;
+			});
+			if (actor.socket) {
+				actor.socket.emit('update', {
+					items: items
+				});
+			}
 
 			new Bomb(
 					actor.position.x,

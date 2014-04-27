@@ -2,6 +2,7 @@
 
 var Actor = require('./../actor');
 var TileTypes = require('./../map/tile-types');
+var BombExplosion = require('./bomb-explosion');
 
 var getRandom = function(min, max) {
 	return Math.floor(Math.random()*(max-min+1)+min);
@@ -37,10 +38,6 @@ module.exports = Object.define(
 				break;
 		}
 
-		var pos = grid.getTileFor(this.position.x, this.position.y);
-		if (TileTypes.fromId(pos.tile).isWall)
-			return;
-
 		grid.putActor(this);
 		actors[this.id] = this;
 
@@ -48,11 +45,29 @@ module.exports = Object.define(
 		this.sprite = 'img-bomb';
 		this.ticksBeforeAction = 40;
 		this.requestedAction = function(actor) {
+			for (var rX = -1; rX <= 1; rX++) {
+				for (var rY = -1; rY <= 1; rY++) {
+					var pos = grid.getTileFor(actor.position.x + rX, actor.position.y + rY);
+					pos.actors.forEach(function(act) {
+						act.health -= 3;
+					});
+				}
+			}
+			grid.destroyTilesAt(
+				actor.position.x - 1,
+				actor.position.y - 1,
+				actor.position.x + 1,
+				actor.position.y + 1
+			);
+
 			grid.removeActor(actor);
-			new BombExplosion(
+			delete actors[actor.id]
+			var be = new BombExplosion(
 				actor.position.x, actor.position.y,
 				source, grid, actors, args
 			);
+			grid.putActor(be);
+			actors[be.id] = be;
 		}
 	}, {
 
