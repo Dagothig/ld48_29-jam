@@ -1,5 +1,8 @@
 var TileTypes = require('./tile-types');
 var LayerTypes = require('./layer-types');
+var Treasure = require('./treasure');
+var Items = require('./items');
+var Troll = require('./troll');
 
 module.exports = Object.define(
 	function Grid(width, height) {
@@ -7,6 +10,7 @@ module.exports = Object.define(
 		this.width = width;
 		this.height = height;
 		this.tiles = new Array(Object.keys(LayerTypes).length);
+		this.actors = [];
 
 		// Fill in ground end empty layer type arrays
 		for (var n = 0; n < this.tiles.length; n++) {
@@ -16,7 +20,12 @@ module.exports = Object.define(
 				for (var y = 0; y < this.height; y++) {
 					switch (n) {
 						case LayerTypes.TILES:
-							this.tiles[n][x][y] = TileTypes.ROCK.tileId;
+							if (Math.random() < 0.6)
+								this.tiles[n][x][y] = TileTypes.ROCK.tileId;
+							else if (Math.random() < 0.9)
+								this.tiles[n][x][y] = TileTypes.DARK_ROCK.tileId;
+							else
+								this.tiles[n][x][y] = TileTypes.GRASSY_ROCK.tileId;
 							break;
 						case LayerTypes.ACTORS:
 							this.tiles[n][x][y] = [];
@@ -34,10 +43,10 @@ module.exports = Object.define(
 			return Math.floor(Math.random()*(max-min+1)+min);
 		};
 		var addWallsForRect = function(walls, rect) {
-			walls.push({ x1: rect.x1, y1: rect.y1, x2: rect.x1, y2: rect.y2, dir: 'left' });
-			walls.push({ x1: rect.x1, y1: rect.y1, x2: rect.x2, y2: rect.y1, dir: 'up' });
-			walls.push({ x1: rect.x2, y1: rect.y1, x2: rect.x2, y2: rect.y2, dir: 'right' });
-			walls.push({ x1: rect.x1, y1: rect.y2, x2: rect.x2, y2: rect.y2, dir: 'down' });
+			walls.push({ x1: rect.x1, y1: rect.y1+1, x2: rect.x1, y2: rect.y2-1, dir: 'left' });
+			walls.push({ x1: rect.x1+1, y1: rect.y1, x2: rect.x2-1, y2: rect.y1, dir: 'up' });
+			walls.push({ x1: rect.x2, y1: rect.y1+1, x2: rect.x2, y2: rect.y2-1, dir: 'right' });
+			walls.push({ x1: rect.x1+1, y1: rect.y2, x2: rect.x2-1, y2: rect.y2, dir: 'down' });
 		};
 		var rndPointFromWall = function(wall) {
 			if (wall.x1 == wall.x2) { // horizontal wall (left - right)
@@ -99,8 +108,8 @@ module.exports = Object.define(
 			if (hallway.dir == 'left')  hallway.x -= hallwayLength;
 			if (hallway.dir == 'right') hallway.x += hallwayLength;
 			var desiredDimensions = {
-				width: getRandom(2, 4),
-				height: getRandom(2, 4)
+				width: Math.random() < 0.75 ? getRandom(2, 4) : getRandom(4, 5),
+				height: Math.random() < 0.75 ? getRandom(2, 4) : getRandom(4, 5)
 			};
 			var roomRect = findRoomRectFromHallwayAndDimensions(hallway, desiredDimensions);
 
@@ -109,7 +118,7 @@ module.exports = Object.define(
 			forEachRect(roomRect, function(x, y) {
 				grid = self.tiles[LayerTypes.TILES];
 				try {
-					if (grid[x][y] != TileTypes.ROCK.tileId) {
+					if (!TileTypes.fromId(grid[x][y]).isWall) {
 						isOK = false; // is not k! kay?
 					}
 				} catch (o_O) {
@@ -119,16 +128,22 @@ module.exports = Object.define(
 			if (isOK) { // Spawn the motherfucker! (actually its a room not a mtf)
 				forEachRect(roomRect, function(x, y) {
 					self.tiles[LayerTypes.TILES][x][y] = TileTypes.ROCKY_GROUND.tileId;
-					if (Math.random() < 0.005) {
-						var Treasure = require('./treasure');
-						var Items = require('./items');
+					if (Math.random() < 0.01) { // Treasure
 						self.tiles[LayerTypes.ACTORS][x][y].push(new Treasure(x, y, [Items.broadsword]));
-					}
-					if (Math.random() < 0.005) {
-						var Troll = require('./troll');
-						self.tiles[LayerTypes.ACTORS][x][y].push(new Troll(x, y));
+					} else if (Math.random() < 0.005) { // Trolls
+						var troll = new Troll(x, y);
+						self.actors.push(troll);
+						self.tiles[LayerTypes.ACTORS][x][y].push(troll);
 					}
 				});
+				if (desiredDimensions.width >= 4 && desiredDimensions.height >= 4 && Math.random() < 0.2) { // Pound
+					forEachRect(roomRect, function(x, y) {
+						if (x > roomRect.x1 && x < roomRect.x2 &&
+								y > roomRect.y1 && y < roomRect.y2) {
+							self.tiles[LayerTypes.TILES][x][y] = TileTypes.WATER.tileId;
+						}
+					});
+				}
 				var grid = self.tiles[LayerTypes.TILES];
 				for (var i = 1; i <= hallwayLength-1; i++) {
 					if (hallway.dir == 'up') { // Ehh we want doors right?

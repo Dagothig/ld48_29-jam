@@ -1,13 +1,12 @@
-var Actor = require('./actor');
+var Character = require('./character');
 
 module.exports = Object.define(
-	Actor,
+	Character,
 	function Mob(x, y) {
-		Actor.call(this);
+		Character.call(this);
 
 		this.position.x = x;
 		this.position.y = y;
-		this.health = 6;
 	}, {
 
 	}

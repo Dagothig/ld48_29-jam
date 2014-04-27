@@ -8,7 +8,7 @@ module.exports = Object.define(
 
 		this.app = app;
 		this.grid = new Grid(100, 100);
-		this.actors = [];
+		this.actors = this.grid.actors;
 
 		// Game loop
 		function gameLoop() {

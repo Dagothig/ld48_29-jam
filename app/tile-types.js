@@ -1,6 +1,7 @@
 var types = {
 	ROCK: {
-		tileId: 0
+		tileId: 0,
+		isWall: true
 	},
 	GRASS: {
 		tileId: 1,
@@ -9,6 +10,17 @@ var types = {
 	ROCKY_GROUND: {
 		tileId: 2,
 		walkable: true
+	},
+	WATER: {
+		tileId: 3
+	},
+	DARK_ROCK: {
+		tileId: 4,
+		isWall: true
+	},
+	GRASSY_ROCK: {
+		tileId: 5,
+		isWall: true
 	}
 };
 var reverseTypes = {};
