@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = function(callback, tickLength) {
 	var last = Date.now();
 	function checkTick() {

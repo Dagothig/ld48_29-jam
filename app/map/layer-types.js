@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
 	TILES: 0,
 	ITEMS: 1,

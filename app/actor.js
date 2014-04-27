@@ -1,3 +1,5 @@
+'use strict';
+
 var id = 0;
 
 module.exports = Object.define(

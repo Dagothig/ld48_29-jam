@@ -1,3 +1,5 @@
+'use strict';
+
 var types = {
 	ROCK: {
 		tileId: 0,
