@@ -44,11 +44,11 @@
 			window.onload = function(){
 				var switchElem = document.getElementsByClassName('kb-switch')[0];
 				switchElem.onclick = function() {
-					if (window.KB_MODE == "querty") {
+					if (window.KB_MODE == "qwerty") {
 						window.KB_MODE = "azerty";
-						switchElem.getElementsByTagName('strong')[0].innerText = "QUERTY";
+						switchElem.getElementsByTagName('strong')[0].innerText = "QWERTY";
 					} else {
-						window.KB_MODE = "querty";
+						window.KB_MODE = "qwerty";
 						switchElem.getElementsByTagName('strong')[0].innerText = "AZERTY";
 					}
 				};

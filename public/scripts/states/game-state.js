@@ -134,26 +134,26 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 					}
 				}
 				IM.bind(IM.KEYS.A, IM.ACTIONS.PRESSED, function() {
-					if (window.KB_MODE == "qwerty") {
+					if (window.KB_MODE === "qwerty") {
 						useItem('left');
 					} else {
 						dropOrSwapItem();
 					}
 				});
 				IM.bind(IM.KEYS.Q, IM.ACTIONS.PRESSED, function() {
-					if (window.KB_MODE == "azerty") {
+					if (window.KB_MODE === "azerty") {
 						useItem('left');
 					} else {
 						dropOrSwapItem();
 					}
 				});
 				IM.bind(IM.KEYS.W, IM.ACTIONS.PRESSED, function() {
-					if (window.KB_MODE == "qwerty") {
+					if (window.KB_MODE === "qwerty") {
 						useItem('up');
 					}
 				});
 				IM.bind(IM.KEYS.Z, IM.ACTIONS.PRESSED, function() {
-					if (window.KB_MODE == "azerty") {
+					if (window.KB_MODE === "azerty") {
 						useItem('up');
 					}
 				});
