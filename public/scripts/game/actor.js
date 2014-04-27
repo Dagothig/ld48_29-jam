@@ -48,8 +48,8 @@ define(['pixi', 'game/tiled-texture', 'game/animated-sprite'],
 				}
 			}
 		);
-		Actor.fromAnimated = function(fileName, animatedProps, map) {
-			var texture = new TiledTexture(pixi.getTexture(fileName), 24, 24);
+		Actor.fromAnimated = function(fileName, animatedProps, map, tileW, tileH) {
+			var texture = new TiledTexture(pixi.getTexture(fileName), tileW || 24, tileH || 24);
 			var sprite = new AnimatedSprite(texture, animatedProps.fps, animatedProps.loop);
 			return new Actor(sprite, map);
 		};
