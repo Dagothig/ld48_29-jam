@@ -3,7 +3,7 @@
 var Actor = require('./../actor');
 var Items = require('./../items/items');
 
-module.exports = Object.define(
+var Treasure = Object.define(
 	Actor,
 	function Treasure(x, y, items) {
 		Actor.call(this);
@@ -34,3 +34,36 @@ module.exports = Object.define(
 
 	}
 );
+Treasure.addForTile = function(grid, x, y, items) {
+	var t = grid.getTileFor(x, y);
+	var treasure;
+	for (var i = 0; i < t.actors.length; i++) {
+		if (t.actors[i] instanceof Treasure) {
+			treasure = t.actors[i];
+			break;
+		}
+	}
+	if (!treasure) {
+		treasure = new Treasure(x, y, items);
+		grid.putActor(treasure);
+	} else {
+		items.forEach(function(item) {
+			treasure.items.push(item);
+		})
+	}
+
+	var titems = [];
+	treasure.items.forEach(function (item, i) {
+		titems[i] = item.name;
+	});
+
+	t.actors.forEach(function(actor) {
+		if (actor.socket) {
+			actor.socket.emit('update', {
+				'treasure': titems
+			})
+		}
+	});
+}
+
+module.exports = Treasure;
