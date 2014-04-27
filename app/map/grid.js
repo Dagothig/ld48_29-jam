@@ -44,6 +44,10 @@ module.exports = Object.define(
 		var getRandom = function(min, max) {
 			return Math.floor(Math.random()*(max-min+1)+min);
 		};
+		var shuffle = function(o) {
+			for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+			return o;
+		};
 		var addWallsForRect = function(walls, rect) {
 			walls.push({ x1: rect.x1, y1: rect.y1+1, x2: rect.x1, y2: rect.y2-1, dir: 'left' });
 			walls.push({ x1: rect.x1+1, y1: rect.y1, x2: rect.x2-1, y2: rect.y1, dir: 'up' });
@@ -146,7 +150,7 @@ module.exports = Object.define(
 
 				if (!roomIsPool) { // Add ITEMS & MOBS! (not over a pool)
 					forEachRect(roomRect, function(x, y) {
-						if (Math.random() < 0.01) { // Treasure
+						if (Math.random() < 0.9) { // Treasure
 							self.tiles[LayerTypes.ACTORS][x][y].push(new Treasure(x, y));
 						} else if (Math.random() < 0.005 * 0) { // Trolls
 							var troll = new Troll(x, y);
@@ -171,6 +175,7 @@ module.exports = Object.define(
 
 				var nextWalls = [];
 				addWallsForRect(nextWalls, roomRect);
+				nextWalls = shuffle(nextWalls);
 				nextWalls.forEach(tryAddRoomForWall);
 			}
 

@@ -138,6 +138,9 @@ canvas {
 .icon-cake:after {
   background-image: url('/res/cake.png');
 }
+.icon-bomb:after {
+  background-image: url('/res/bomb.png');
+}
 
 #items-toolbar li,
 #treasure-toolbar li {
