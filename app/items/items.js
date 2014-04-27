@@ -3,6 +3,7 @@
 var Actor = require('./../actor');
 var Firejet = require('./../characters/firejet');
 var BloodSpurt = require('./../characters/blood-spurt');
+var Bomb = require('./bomb');
 
 module.exports = {
 	broadsword: {
@@ -79,7 +80,16 @@ module.exports = {
 	bomb: {
 		name: 'bomb',
 		activate: function(actor, args) {
+			actor.requestedAction = null;
+			actor.ticksBeforeAction = 5;
 
+			new Bomb(
+					actor.position.x,
+					actor.position.y,
+					actor,
+					this.grid,
+					args
+				);
 		}
 	},
 	firejet: {
