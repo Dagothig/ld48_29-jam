@@ -130,6 +130,8 @@ module.exports = Object.define(
 					self.tiles[LayerTypes.TILES][x][y] = TileTypes.ROCKY_GROUND.tileId;
 					if (Math.random() < 0.01) { // Treasure
 						self.tiles[LayerTypes.ACTORS][x][y].push(new Treasure(x, y, [Items.broadsword]));
+					} else if (Math.random() < 0.01) { // Treasure
+						self.tiles[LayerTypes.ACTORS][x][y].push(new Treasure(x, y, [Items.firejet]));
 					} else if (Math.random() < 0.005) { // Trolls
 						var troll = new Troll(x, y);
 						self.actors.push(troll);

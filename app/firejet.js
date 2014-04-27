@@ -42,7 +42,7 @@ var Firejet = Object.define(
 				break;
 		}
 		var pos = grid.getTileFor(this.position.x, this.position.y);
-		if (!TileTypes.fromId(pos.tile).walkable)
+		if (TileTypes.fromId(pos.tile).isWall)
 			return;
 
 		grid.putActor(this);
@@ -54,6 +54,9 @@ var Firejet = Object.define(
 		this.requestedAction = function(actor) {
 			actor.tileY = 1;
 
+			grid.getTileFor(actor.position.x, actor.position.y).actors.forEach(function (act) {
+				act.health--;
+			});
 			new Firejet(
 				actor.position.x, actor.position.y, 
 				source, grid, actors, args
