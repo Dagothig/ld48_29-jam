@@ -49,6 +49,10 @@ module.exports = Object.define(
 		this.ticksBeforeAction = 40;
 		this.requestedAction = function(actor) {
 			grid.removeActor(actor);
+			new BombExplosion(
+				actor.position.x, actor.position.y,
+				source, grid, actors, args
+			);
 		}
 	}, {
 
