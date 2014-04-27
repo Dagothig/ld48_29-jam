@@ -2,6 +2,7 @@
 
 var Actor = require('./../actor');
 var Firejet = require('./../characters/firejet');
+var BloodSpurt = require('./../characters/blood-spurt');
 
 module.exports = {
 	broadsword: {
@@ -59,8 +60,12 @@ module.exports = {
 				});
 			}
 
+			var self = this;
 			this.grid.getTileFor(sword.position.x, sword.position.y).actors.forEach(function(act) {
-				act.health--;
+				if (act.health) {
+					act.health--;
+					new BloodSpurt(act.position.x, act.position.y, self.grid, self.actors);
+				}
 			});
 
 			sword.sprite = 'img-sword';

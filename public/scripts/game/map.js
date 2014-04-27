@@ -1,7 +1,7 @@
 'use strict';
 
-define(['pixi', 'game/player'],
-	function(pixi, Player) {
+define(['pixi', 'game/player', 'game/actor'],
+	function(pixi, Player, Actor) {
 		return Object.define(
 			function Map(backgroundColor, tileSize) {
 				this.stage = new pixi.Stage(backgroundColor);
@@ -85,7 +85,11 @@ define(['pixi', 'game/player'],
 						var current = this.renderedActors[key];
 						var toDisplay = data[key];
 						if (!current) {
-							current = new Player(this, toDisplay.sprite);
+							if (toDisplay.animated) {
+								current = Actor.fromAnimated(toDisplay.sprite, toDisplay.animated, this);
+							} else {
+								current = new Player(this, toDisplay.sprite);
+							}
 							this.renderedActors[key] = current;
 							if (toDisplay.zOrder) {
 								current.zOrder = toDisplay.zOrder;

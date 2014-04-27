@@ -2,6 +2,7 @@
 
 var Actor = require('./../actor');
 var TileTypes = require('./../map/tile-types');
+var BloodSpurt = require('./blood-spurt');
 
 var Firejet = Object.define(
 	Actor,
@@ -55,7 +56,10 @@ var Firejet = Object.define(
 			actor.tileY = 1;
 
 			grid.getTileFor(actor.position.x, actor.position.y).actors.forEach(function (act) {
-				act.health--;
+				if (act.health) {
+					act.health--;
+					new BloodSpurt(act.position.x, act.position.y, grid, actors);
+				}
 			});
 			new Firejet(
 				actor.position.x, actor.position.y,

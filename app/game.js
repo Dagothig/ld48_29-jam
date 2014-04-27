@@ -44,15 +44,21 @@ module.exports = Object.define(
 					var info = {};
 					for (var key in actors) {
 						var act = actors[key];
-						info[key] = {
-							position: act.position,
-							sprite: act.sprite,
-							tileY: act.tileY,
-							decal: act.decal,
-							zOrder: act.zOrder,
-							rotation: act.rotation,
-							rotationCentered: act.rotationCentered
-						}
+						var data = {};
+						[
+							'position',
+							'sprite',
+							'tileY',
+							'decal',
+							'zOrder',
+							'rotation',
+							'rotationCentered',
+							'animated'
+						].forEach(function(key) {
+							if (key in act)
+								data[key] = act[key];
+						});
+						info[key] = data;
 					}
 					actor.socket.emit('display', info);
 				}

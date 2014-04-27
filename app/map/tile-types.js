@@ -23,6 +23,18 @@ var types = {
 	GRASSY_ROCK: {
 		tileId: 5,
 		isWall: true
+	},
+	GRAY_BRICK: {
+		tileId: 6,
+		isWall: true
+	},
+	GRAY_GROUND: {
+		tileId: 7,
+		walkable: true
+	},
+	DARK_EMPTY_SPACE: {
+		tileId: 8,
+		isWall: true
 	}
 };
 var reverseTypes = {};
