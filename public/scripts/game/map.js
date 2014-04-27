@@ -94,9 +94,17 @@ define(['pixi', 'game/player'],
 						}
 						current.position.x = toDisplay.position.x;
 						current.position.y = toDisplay.position.y;
+						current.sprite.tileX = toDisplay.tileX || 0;
 						current.sprite.tileY = toDisplay.tileY || 0;
+						current.sprite.rotation = toDisplay.rotation || 0;
 						if (toDisplay.decal)
 							current.sprite.decal = toDisplay.decal;
+						if (toDisplay.rotationCentered) {
+							current.sprite.anchor.x = 0.5;
+							current.sprite.anchor.y = 0.5;
+							current.position.x += 0.5;
+							current.position.y += 0.5;
+						}
 
 						// Use diff to calculate alpha
 						var diffX = toDisplay.position.x - player.position.x;

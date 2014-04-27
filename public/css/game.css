@@ -132,6 +132,9 @@ canvas {
 .icon-broadsword:after {
   background-image: url('/res/sword-icon.png');
 }
+.icon-firejet:after {
+  background-image: url('/res/parchment-red.png');
+}
 
 #items-toolbar li,
 #treasure-toolbar li {

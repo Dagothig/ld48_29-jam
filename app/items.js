@@ -1,4 +1,5 @@
 var Actor = require('./actor');
+var Firejet = require('./firejet');
 
 var items = {
 	broadsword: {
@@ -66,6 +67,22 @@ var items = {
 				action: 'die',
 				args: {}
 			}
+		}
+	},
+	firejet: {
+		name: 'firejet',
+		activate: function(actor, args) {
+			actor.requestedAction = null;
+			actor.ticksBeforeAction = 10;
+
+			new Firejet(
+				actor.position.x, 
+				actor.position.y, 
+				actor, 
+				this.grid, 
+				this.actors, 
+				args
+			);
 		}
 	}
 };

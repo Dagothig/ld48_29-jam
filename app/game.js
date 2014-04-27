@@ -7,7 +7,7 @@ module.exports = Object.define(
 		var self = this;
 
 		this.app = app;
-		this.grid = new Grid(25, 25);
+		this.grid = new Grid(100, 100);
 		this.actors = [];
 
 		// Game loop
@@ -16,12 +16,16 @@ module.exports = Object.define(
 			self.actors.forEach(function(actor) {
 				if (!(--actor.ticksBeforeAction)) {
 					if (actor.requestedAction) {
-						var action = actions[actor.requestedAction.action];
+						if (actor.requestedAction instanceof Function) {
+							actor.requestedAction.call(self, actor);
+						} else {
+							var action = actions[actor.requestedAction.action];
 
-						// In case we send an invalid action we don't want lock out
-						if (!action)
-							return actor.requestedAction = null;
-						action.call(self, actor, actor.requestedAction.args);
+							// In case we send an invalid action we don't want lock out
+							if (!action)
+								return actor.requestedAction = null;
+							action.call(self, actor, actor.requestedAction.args);
+						}
 					} else {
 						actor.ticksBeforeAction = 1;
 					}
@@ -42,7 +46,9 @@ module.exports = Object.define(
 							sprite: act.sprite,
 							tileY: act.tileY,
 							decal: act.decal,
-							zOrder: act.zOrder
+							zOrder: act.zOrder,
+							rotation: act.rotation,
+							rotationCentered: act.rotationCentered
 						}
 					}
 					actor.socket.emit('display', info);

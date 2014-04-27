@@ -19,7 +19,7 @@ define(['pixi', 'game/actor', 'game/tiled-texture', 'game/tiled-sprite'],
 					},
 					set y(val) {
 						self.sprite.position.y = val * (map.tileSize);
-					}
+					},
 				};
 				this.items = [];
 
