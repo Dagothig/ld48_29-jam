@@ -135,6 +135,9 @@ canvas {
 .icon-firejet:after {
   background-image: url('/res/parchment-red.png');
 }
+.icon-cake:after {
+  background-image: url('/res/cake.png');
+}
 
 #items-toolbar li,
 #treasure-toolbar li {

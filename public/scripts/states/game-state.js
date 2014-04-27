@@ -274,7 +274,6 @@ define(['game/map', 'io', 'pixi', 'game/tile-grid', 'game/actor', 'game/player']
 					}
 
 					if ('items' in data) {
-						console.log(data.items);
 						this.player.items = data.items;
 						for (var i = 0; i < 4; i++) {
 							var isActive = false;

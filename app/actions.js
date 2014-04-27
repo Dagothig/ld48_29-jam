@@ -180,7 +180,7 @@ module.exports = {
 					var items = [];
 					actor.items.forEach(function(item, i) {
 						items[i] = item.name;
-					})
+					});
 					data.items = items;
 				}
 				act.socket.emit('update', data);

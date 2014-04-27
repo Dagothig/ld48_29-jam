@@ -104,6 +104,19 @@ module.exports = {
 			actor.requestedAction = null;
 			actor.ticksBeforeAction = 3;
 			delete actor.items[args.itemNo];
+
+			var items = [];
+			actor.items.forEach(function(item, i) {
+				items[i] = item.name;
+			});
+			actor.health += 10;
+
+			if (actor.socket) {
+				actor.socket.emit('update', {
+					items: items,
+					health: actor.health
+				});
+			}
 		}
 	}
 };
